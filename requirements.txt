@@ -1,0 +1,1 @@
+# No external dependencies — refresh_trends.py uses Python stdlib only (urllib, ssl, re, json, html, ssl, datetime).

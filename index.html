@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>xinru lifestyle · 內容工作台</title>
+<style>
+  :root{
+    --bg:#F4EEE3; --bg2:#FBF7F0; --card:#FFFFFF; --ink:#2C241D; --ink2:#6B5E50;
+    --line:#E6DCCB; --terra:#BE6240; --terra-soft:#E8C9B8; --sage:#7E8E6B;
+    --sage-soft:#D7DECB; --gold:#C9A35E; --plum:#7A5C6E; --shadow:0 2px 14px rgba(92,72,52,.08);
+    --r:14px; --serif:'Georgia','Noto Serif TC',serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:-apple-system,'PingFang TC','Microsoft JhengHei',sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;font-size:15px}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 22px 80px}
+  header{background:linear-gradient(135deg,#3A2C22,#5A3F30);color:#F4EEE3;padding:26px 22px 22px;border-radius:0 0 26px 26px;box-shadow:var(--shadow);position:sticky;top:0;z-index:50}
+  .head-row{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  .brand{display:flex;align-items:baseline;gap:12px}
+  .brand h1{font-family:var(--serif);font-size:25px;font-weight:600;letter-spacing:.3px}
+  .brand .sub{font-size:12.5px;opacity:.75;letter-spacing:2px;text-transform:uppercase}
+  .status{display:flex;align-items:center;gap:10px;font-size:12.5px;background:rgba(255,255,255,.08);padding:7px 14px;border-radius:30px}
+  .dot{width:9px;height:9px;border-radius:50%;background:#8FD16F;box-shadow:0 0 0 0 rgba(143,209,111,.6);animation:pulse 2.2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(143,209,111,.5)}70%{box-shadow:0 0 0 9px rgba(143,209,111,0)}100%{box-shadow:0 0 0 0 rgba(143,209,111,0)}}
+  nav{max-width:1180px;margin:18px auto 0;display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+  nav button{background:transparent;border:1px solid rgba(255,255,255,.18);color:#F4EEE3;padding:8px 15px;border-radius:30px;font-size:13px;cursor:pointer;transition:.18s;font-family:inherit}
+  nav button:hover{background:rgba(255,255,255,.1)}
+  nav button.on{background:#F4EEE3;color:#3A2C22;border-color:#F4EEE3;font-weight:600}
+  .zone{display:none;animation:fade .35s ease}
+  .zone.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .zone-head{margin:34px 0 20px}
+  .zone-head h2{font-family:var(--serif);font-size:24px;color:var(--ink)}
+  .zone-head p{color:var(--ink2);font-size:13.5px;margin-top:3px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
+  .tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;background:var(--terra-soft);color:var(--terra);font-weight:600;letter-spacing:.3px}
+  .tag.sage{background:var(--sage-soft);color:var(--sage)} .tag.gold{background:#F2E2C0;color:var(--gold)} .tag.plum{background:#E7D4DE;color:var(--plum)} .tag.ink{background:#E6DCCB;color:var(--ink2)}
+  .typb{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:6px;letter-spacing:.4px}
+  .typb.reel{background:#FCE4E0;color:#C04A36}
+  .typb.post{background:#E4ECF5;color:#3D5F8A}
+  .typb.carousel{background:#EFE4F5;color:#7A4F9A}
+  .fresh{font-size:11px;font-weight:700}
+  .fresh.hot{color:#D04030} .fresh.rise{color:var(--gold)} .fresh.ev{color:var(--sage)}
+  h3{font-family:var(--serif);font-size:17.5px;margin-bottom:8px}
+  h4{font-size:14px;margin:14px 0 6px;color:var(--terra)}
+  .muted{color:var(--ink2);font-size:13px}
+  small{color:var(--ink2);font-size:12px}
+  .dash{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:22px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow)}
+  .stat .n{font-family:var(--serif);font-size:30px;color:var(--terra)} .stat .l{font-size:12px;color:var(--ink2);margin-top:2px}
+  .pos{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .pillbox{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+  .pillbox h3{margin-top:0}
+  .chip{display:inline-block;background:var(--bg);border:1px solid var(--line);padding:5px 12px;border-radius:20px;font-size:12px;margin:4px 4px 0 0;color:var(--ink2)}
+  .chip.terra{background:var(--terra-soft);color:var(--terra);border-color:transparent}
+  .filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+  .filters button{background:var(--card);border:1px solid var(--line);padding:6px 14px;border-radius:20px;font-size:12.5px;cursor:pointer;color:var(--ink2);font-family:inherit;transition:.15s}
+  .filters button.on{background:var(--ink);color:#F4EEE3;border-color:var(--ink)}
+  .filters button:hover{border-color:var(--terra)}
+  .fsep{width:1px;height:20px;background:var(--line);margin:0 4px}
+  .tlist{display:flex;flex-direction:column;gap:11px}
+  .trend{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);transition:.15s;cursor:pointer}
+  .trend:hover{border-color:var(--terra);transform:translateY(-1px)}
+  .trend-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+  .trend h3{margin:0;font-size:16px}
+  .trend .meta{font-size:11.5px;color:var(--ink2);margin-top:3px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .trend .row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:11px}
+  .trend .row div{font-size:12.8px}
+  .trend .row b{color:var(--sage);font-size:11px;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:1px}
+  .trend .hook{margin-top:10px;background:var(--bg);border-left:3px solid var(--gold);padding:8px 12px;border-radius:0 8px 8px 0;font-size:13px;font-family:var(--serif)}
+  .trend .why{margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .ex-link{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;color:#3D5F8A;background:#E4ECF5;padding:4px 10px;border-radius:20px;text-decoration:none;font-weight:600;transition:.15s;border:none;cursor:pointer;font-family:inherit}
+  .ex-link:hover{background:#D0DCEE}
+  .ex-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#fff;border:1px solid #E4D7C8;border-radius:16px;box-shadow:0 14px 44px rgba(0,0,0,.22);padding:16px 18px;z-index:9999;max-width:540px;width:calc(100% - 40px);opacity:0;pointer-events:none;transition:.28s;font-family:var(--sans)}
+  .ex-toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+  .ex-toast-title{font-weight:700;color:#3A2C22;font-size:14px;margin-bottom:9px;display:flex;align-items:center;gap:6px}
+  .ex-toast .ex-url-a{display:block;color:#3D5F8A;word-break:break-all;font-size:12.5px;background:#EEF3F8;padding:9px 11px;border-radius:9px;text-decoration:none;margin-bottom:8px;line-height:1.45}
+  .ex-toast .ex-url-a:hover{background:#DDE7F1;text-decoration:underline}
+  .ex-toast-hint{color:#8a7d6e;font-size:11.5px;margin-bottom:11px;line-height:1.5}
+  .ex-toast-bar{display:flex;gap:8px;align-items:center}
+  .ex-toast-copy{background:#3A2C22;color:#F4EEE3;border:none;padding:8px 16px;border-radius:18px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600}
+  .ex-toast-copy:hover{background:#5A3F30}
+  .ex-toast-close{background:transparent;color:#8a7d6e;border:none;padding:8px 12px;border-radius:18px;font-size:12px;cursor:pointer;font-family:inherit}
+  .ex-toast-close:hover{color:#3A2C22}
+  .slist{display:flex;flex-direction:column;gap:16px}
+  .script{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
+  .script>header{position:static;background:linear-gradient(135deg,#FBF7F0,#F4EEE3);color:var(--ink);border-radius:0;padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+  .script header h3{margin:0;font-size:16.5px}
+  .script .body{padding:18px 20px}
+  .storyline{background:linear-gradient(135deg,#FBF3E6,#F7E9D6);border:1px solid #F0DCAE;border-radius:10px;padding:13px 15px;font-size:13.5px;color:#6B4818;margin:10px 0}
+  .storyline b{color:#8A5A18}
+  .shots{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+  .shots th{text-align:left;background:var(--bg);padding:8px 10px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink2);border-bottom:1px solid var(--line)}
+  .shots td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .shots td:first-child{font-weight:600;color:var(--terra);width:54px}
+  .onscreen{background:#F0EAF8;border:1px solid #D9C9F0;border-radius:8px;padding:11px 13px;font-size:12.8px}
+  .onscreen .ot{display:flex;gap:8px;margin:3px 0;flex-wrap:wrap;align-items:baseline}
+  .onscreen .ot .t{font-family:var(--serif);color:#5A3A7A}
+  .onscreen .pos{font-size:10.5px;background:#E4D8F0;color:#6B4A8A;padding:1px 6px;border-radius:4px;font-weight:600}
+  .express{background:#EAF3E8;border:1px solid #CFE0C8;border-radius:8px;padding:11px 13px;font-size:12.8px;color:#3D5A2E;margin-top:8px}
+  .express b{color:#2E4A1E}
+  .lang-flag{font-size:10px;font-weight:700;background:var(--ink);color:#F4EEE3;padding:1px 6px;border-radius:4px;letter-spacing:.3px;margin-right:4px}
+  .copy{background:var(--terra);color:#fff;border:none;padding:6px 13px;border-radius:20px;font-size:11.5px;cursor:pointer;font-family:inherit;transition:.15s}
+  .copy:hover{background:#A84F2F}
+  .caption{background:var(--bg);border-radius:8px;padding:11px 13px;font-size:13px;margin-top:10px;white-space:pre-line}
+  .hashtags{color:var(--sage);font-size:12px;margin-top:6px}
+  .shotgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .shotcard{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px}
+  .shotcard b{color:var(--terra);display:block;font-size:12px;margin-bottom:4px}
+  .checklist{list-style:none}
+  .checklist li{padding:9px 0;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:10px;font-size:13.5px;cursor:pointer}
+  .checklist li:last-child{border-bottom:none}
+  .checklist input{margin-top:3px;accent-color:var(--terra);width:17px;height:17px}
+  .checklist li.done{color:var(--ink2);text-decoration:line-through;text-decoration-color:var(--terra)}
+  .app{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .app:last-child{border-bottom:none}
+  .app .ico{width:38px;height:38px;border-radius:10px;background:var(--terra-soft);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .app b{font-size:14px} .app small{display:block;color:var(--ink2)}
+  .beatcard{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+  .beatcard h4{margin-top:0}
+  .timeline{display:flex;gap:3px;margin:10px 0;flex-wrap:wrap}
+  .clip{height:34px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600}
+  .rules{list-style:none}
+  .rules li{padding:9px 0 9px 26px;border-bottom:1px solid var(--line);position:relative;font-size:13.5px}
+  .rules li:last-child{border-bottom:none}
+  .rules li::before{content:"✦";position:absolute;left:0;color:var(--gold)}
+  table.data{width:100%;border-collapse:collapse;font-size:13px}
+  table.data th,table.data td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:center}
+  table.data th{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink2)}
+  table.data td input{width:100%;border:none;background:transparent;text-align:center;font-family:inherit;font-size:13px;color:var(--ink);outline:none}
+  table.data td input:focus{background:var(--bg)}
+  table.data td.title{text-align:left;font-weight:600}
+  table.data tr:hover{background:var(--bg)}
+  .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .cal .day{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px;min-height:78px;font-size:11px}
+  .cal .day .dn{font-weight:700;color:var(--terra);font-size:11px;margin-bottom:3px}
+  .cal .day textarea{width:100%;border:none;background:transparent;font-family:inherit;font-size:11px;resize:vertical;outline:none;color:var(--ink);min-height:44px}
+  .cal .day.weekend{background:var(--bg)}
+  .weeklabel{grid-column:1/-1;font-family:var(--serif);font-size:14px;color:var(--ink);margin:14px 0 2px;font-weight:600}
+  .insp{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+  .inspcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:var(--shadow)}
+  .inspcard b{color:var(--terra);font-size:13.5px} .inspcard small{color:var(--ink2);font-size:12px;display:block;margin-top:3px}
+  .note{background:#FBF3E6;border:1px solid #F0DCAE;border-radius:10px;padding:13px 15px;font-size:13px;color:#7A5A2A;margin-top:12px}
+  .note b{color:#6B4818}
+  .hgrp{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden}
+  .hgrp-head{background:var(--bg2);padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);transition:.15s}
+  .hgrp-head:hover{background:var(--bg)}
+  .hgrp-head h4{margin:0;color:var(--ink);font-family:var(--serif);font-size:15px}
+  .hgrp-head .cnt{font-size:11.5px;color:var(--ink2)}
+  .hgrp-body{display:none;padding:8px 16px 14px}
+  .hgrp.open .hgrp-body{display:block}
+  .hgrp .trend{box-shadow:none;margin-top:8px}
+  .h-empty{text-align:center;color:var(--ink2);padding:30px;font-size:13px}
+  @media(max-width:680px){.trend .row,.pos{grid-template-columns:1fr}.cal{grid-template-columns:repeat(2,1fr)}.onscreen .ot{flex-direction:column}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head-row">
+    <div class="brand">
+      <h1>xinru lifestyle</h1>
+      <span class="sub">內容工作台</span>
+    </div>
+    <div class="status"><span class="dot"></span>每日 09:00 自動刷新選題 · <span id="lastUpd">2026-09-14 22:14</span></div>
+  </div>
+  <nav id="nav">
+    <button class="on" data-z="dash">儀表</button>
+    <button data-z="topics">① 選題</button>
+    <button data-z="script">② 腳本</button>
+    <button data-z="shoot">③ 素材拍攝</button>
+    <button data-z="edit">剪輯節奏</button>
+    <button data-z="data">數據復盤</button>
+    <button data-z="cal">內容日曆</button>
+    <button data-z="hist">歷史選題</button>
+    <button data-z="insp">靈感庫</button>
+  </nav>
+</header>
+<div class="wrap">
+
+<section class="zone on" id="z-dash">
+  <div class="zone-head"><h2>今日工作台</h2><p>定位：共情 + 利他 + aesthetic · 每日早 9 點自動拉取 IG lifestyle 爆款選題（Reel + Post）、腳本、剪輯教學、數據復盤 · 歷史選題自動存檔可回看</p></div>
+  <div class="dash">
+    <div class="stat"><div class="n" id="stTrends">26</div><div class="l">當前選題（Reel+Post）</div></div>
+    <div class="stat"><div class="n">8</div><div class="l">可拍腳本（含 storyline）</div></div>
+    <div class="stat"><div class="n">4×</div><div class="l">每週發布節奏</div></div>
+    <div class="stat"><div class="n" id="stHist">0</div><div class="l">歷史存檔選題</div></div>
+  </div>
+  <div class="pos">
+    <div class="pillbox">
+      <h3>賬號定位錨點</h3>
+      <p class="muted" style="margin-bottom:8px">@xinruzz_ — 把生活過成內容，把內容變成共鳴</p>
+      <span class="chip terra">共情 empathy</span><span class="chip terra">利他 altruism</span><span class="chip terra">aesthetic</span>
+      <h4>四大內容支柱</h4>
+      <span class="chip">旅行 travel</span><span class="chip">想法 thoughts</span><span class="chip">美食 food</span><span class="chip">健康 wellness</span>
+      <h4>三種發布格式</h4>
+      <span class="chip"><span class="typb reel" style="margin-right:4px">Reel</span>動態·高觸及</span><span class="chip"><span class="typb post" style="margin-right:4px">Post</span>靜圖·高互動</span><span class="chip"><span class="typb carousel" style="margin-right:4px">Carousel</span>輪播·高收藏</span>
+      <h4>增長飛輪（80% 流量來自）</h4>
+      <p class="muted">① 情感文字反思（comment-bait）<br>② 可收藏的好去處輪播（save-bait）<br>③ aesthetic 生活蒙太奇（share-bait）</p>
+    </div>
+    <div class="pillbox">
+      <h3>今日優先級</h3>
+      <div class="checklist">
+        <li><input type="checkbox"><span>挑 1 個本週熱門選題（看參考爆款連結）→ 套腳本 → 今天拍完素材</span></li>
+        <li><input type="checkbox"><span>回覆昨天 Reel/Post 的所有留言（前 2 小時黃金期）</span></li>
+        <li><input type="checkbox"><span>刷相機膠捲挖 3 段可用的舊素材（camera-roll mining）</span></li>
+        <li><input type="checkbox"><span>填昨天發布內容的數據復盤表</span></li>
+        <li><input type="checkbox"><span>存 2 條刷到的爆款做靈感庫參考（貼連結 + 拆解）</span></li>
+      </div>
+    </div>
+  </div>
+  <div class="note"><b>核心心法：</b>不追求高製作，追求「被覺得懂我」。每條內容問自己兩個問題——<b>共情點在哪？（讓人覺得被理解）</b> 和 <b>利他點在哪？（讓人學到/收藏/轉發）</b>。答不出來就別發。</div>
+</section>
+
+<section class="zone" id="z-topics">
+  <div class="zone-head"><h2>① 選題 · Trending Now</h2><p>每日 09:00 自動更新 · 已按「共情 + 利他 + aesthetic」過濾 · 含 Reel / Post / Carousel 三種格式 · 每題附參考爆款連結 · 點卡片複製鉤子</p></div>
+  <div class="filters" id="topicFilters">
+    <button class="on" data-f="all">全部</button>
+    <button data-f="thoughts">想法</button>
+    <button data-f="travel">旅行</button>
+    <button data-f="food">美食</button>
+    <button data-f="wellness">健康</button>
+    <span class="fsep"></span>
+    <button class="on" data-t="all" id="tAll">Reel+Post</button>
+    <button data-t="reel" id="tReel">Reel</button>
+    <button data-t="post" id="tPost">Post</button>
+    <button data-t="carousel" id="tCaro">Carousel</button>
+    <span class="fsep"></span>
+    <button data-f="all" id="onlyHot">只看🔥熱門</button>
+  </div>
+  <div class="tlist" id="tlist"></div>
+  <div class="note"><b>選題公式：</b>趨勢格式 × 你的支柱 × 共情/利他角度 = 你的選題。例：「It's very important that you…」(趨勢) × 想法(支柱) × 20歲迷茫(共情) + 「給同齡人的一句話」(利他)。每題都附了<b>參考爆款連結</b>——點進去看別人怎麼拍的，再用你自己的素材和語言重做。借的是結構，不是內容。</div>
+</section>
+
+<section class="zone" id="z-script">
+  <div class="zone-head"><h2>② 腳本 · Storyline Scripts</h2><p>8 個可直接套用的腳本 · 含 storyline 故事線 / 分鏡 / 螢幕文字（位置+字體+動畫）/ 表達方式 / 中英雙語 caption · 點「複製」取走</p></div>
+  <div class="slist" id="slist"></div>
+  <div class="card" style="margin-top:18px">
+    <h3>通用腳本骨架（自己填）</h3>
+    <p class="muted">任何選題都能套這個 5 段式——Reel 和 Post 都適用：</p>
+    <div class="shotgrid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+      <div class="shotcard"><b>① 鉤子 0–1.5s</b>最衝擊畫面或文字 hook，決定划不划走</div>
+      <div class="shotcard"><b>② 建立 1.5–4s</b>讓觀眾知道「這在說我」，情緒錨點</div>
+      <div class="shotcard"><b>③ 鋪陳 4–9s</b>2–3 個細節鏡頭，放大共鳴</div>
+      <div class="shotcard"><b>④ 轉折 9–12s</b>金句/反差/昇華，情緒高點</div>
+      <div class="shotcard"><b>⑤ 留白 12s+</b>開放結尾 + caption 補利他價值</div>
+    </div>
+    <div class="note" style="margin-top:14px"><b>Photo/Carousel 版骨架：</b>圖1 封面+大字鉤子 → 圖2–4 每圖一個點（一圖一意）→ 圖5 反轉或金句 → 圖末 save prompt（「收藏起來，下次___時翻這篇」）。每張圖 5 秒內能讀完。</div>
+  </div>
+</section>
+
+<section class="zone" id="z-shoot">
+  <div class="zone-head"><h2>③ 素材拍攝 · Shot Kit</h2><p>B-roll 庫 · 拍攝清單 · 美學規則 · App 裝備（Reel 與 Post 通用）</p></div>
+  <div class="pos">
+    <div class="pillbox">
+      <h3>萬能 B-roll / 靜圖 鏡頭庫</h3>
+      <small>出門拍一次，夠用一週。影片段每類至少存 3 段；靜圖每類至少存 5 張（Post 用）。</small>
+      <h4>旅行 travel</h4>
+      <div class="shotgrid">
+        <div class="shotcard"><b>移動</b>走路腳/車窗外/列車進站</div>
+        <div class="shotcard"><b>空景</b>天空延時/海浪/山脊線</div>
+        <div class="shotcard"><b>地標</b>廣角建築/招牌特寫</div>
+      </div>
+      <h4>美食 food</h4>
+      <div class="shotgrid">
+        <div class="shotcard"><b>製程</b>沖咖啡/切菜/冒煙</div>
+        <div class="shotcard"><b>成品</b>俯拍桌面/側拍拉花</div>
+        <div class="shotcard"><b>細節</b>手拿杯/叉起一口</div>
+      </div>
+      <h4>健康 wellness</h4>
+      <div class="shotgrid">
+        <div class="shotcard"><b>晨間</b>拉窗簾/喝水/瑜伽</div>
+        <div class="shotcard"><b>運動</b>跑步腳/呼吸/汗水</div>
+        <div class="shotcard"><b>靜心</b>看書/寫字/閉眼</div>
+      </div>
+      <h4>想法 thoughts</h4>
+      <div class="shotgrid">
+        <div class="shotcard"><b>環境</b>桌面雜物/窗外光</div>
+        <div class="shotcard"><b>自己</b>背影/側臉/手的動作</div>
+        <div class="shotcard"><b>城市</b>夜景/人潮/空巷</div>
+      </div>
+    </div>
+    <div class="pillbox">
+      <h3>出門拍攝清單（可勾選）</h3>
+      <small>勾選會自動儲存，下次回來還在。</small>
+      <ul class="checklist" id="shootCheck">
+        <li><input type="checkbox"><span>手機擦鏡頭 + 飛行模式防中斷</span></li>
+        <li><input type="checkbox"><span>確認光線：順光/側逆光最佳，正午頂光避免</span></li>
+        <li><input type="checkbox"><span>開 Dazz Cam／輕顏 拍 3 段復古素材</span></li>
+        <li><input type="checkbox"><span>主體鏡頭 × 3（不同角度/景別）</span></li>
+        <li><input type="checkbox"><span>B-roll 空鏡 × 5（每段 3–5 秒，留剪輯餘地）</span></li>
+        <li><input type="checkbox"><span>至少 1 段「自己入鏡」的背影/側臉</span></li>
+        <li><input type="checkbox"><span>環境音收一段（鳥/海/咖啡機聲）</span></li>
+        <li><input type="checkbox"><span>拍 1 張可做封面/輪播的靜圖（留白構圖）</span></li>
+        <li><input type="checkbox"><span>拍 5 張 aesthetic 靜圖（Post/Carousel 備用：俯拍/側拍/細節/空景/自己）</span></li>
+        <li><input type="checkbox"><span>記下地點名（利他標註用）</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>Aesthetic 拍攝 5 條鐵律</h3>
+    <ul class="rules">
+      <li><b>光比濾鏡重要。</b>黃金時段（日出後/日落前 1 小時）拍，勝過任何後期。</li>
+      <li><b>留白構圖。</b>主體偏一側，留 1/3 負空間，文字有地方落。</li>
+      <li><b>同色系統一。</b>一次出片只用 2–3 個主色（米/綠/木 是安全牌）。</li>
+      <li><b>動態要穩。</b>移動鏡頭靠牆/靠欄杆借力，或開 CapCut 防抖。</li>
+      <li><b>拍長不拍短。</b>每段錄 4–6 秒，剪輯時才有的選；靜圖多拍幾張挑最好的。</li>
+    </ul>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>裝備 & App 裝機</h3>
+    <div class="app"><div class="ico">✂️</div><div><b>CapCut</b><small>剪輯主力 · 自帶 beat sync / 模板 / 自動字幕</small></div></div>
+    <div class="app"><div class="ico">📷</div><div><b>Dazz Cam</b><small>復古膠片濾鏡，一鍵 aesthetic 質感（Reel + Post 通用）</small></div></div>
+    <div class="app"><div class="ico">🎨</div><div><b>Lightroom（1 個 preset）</b><small>固定一個暖調 preset 全網統一色</small></div></div>
+    <div class="app"><div class="ico">🖼️</div><div><b>Panoslice / Canva</b><small>Carousel 排版模板：scrapbook / polaroid / editorial 一鍵套</small></div></div>
+    <div class="app"><div class="ico">📱</div><div><b>Instagram 原生相機</b><small>Reel 直接拍可吃到 IG 演算法加分</small></div></div>
+    <div class="app"><div class="ico">☁️</div><div><b>Google Photos / iCloud</b><small>素材自動備份 + 跨設備取用</small></div></div>
+  </div>
+</section>
+
+<section class="zone" id="z-edit">
+  <div class="zone-head"><h2>剪輯節奏教學</h2><p>CapCut beat-sync 節奏配方 · 轉場庫 · 15 分鐘出片法（Reel 專用；Post/Carousel 看排版節奏）</p></div>
+  <div class="card">
+    <h3>節奏 = 完播率的命脈</h3>
+    <p class="muted">2026 演算法最看重「觀看停留」。節奏對了，普通素材也能爆。核心原則：<b>每 1.5–2.5 秒一個視覺變化</b>（換鏡/動作/文字彈出），不讓眼睛有機會離開。</p>
+  </div>
+  <div class="beatcard">
+    <h4>配方 A · 情感文字反思型（你的主力）</h4>
+    <small>節奏：慢 → 留白 → 金句爆點</small>
+    <div class="timeline">
+      <div class="clip" style="background:var(--terra);width:14%">0–2s 鉤子畫面</div>
+      <div class="clip" style="background:var(--ink2);width:18%">2–4.5s 留白鏡頭+文字浮現</div>
+      <div class="clip" style="background:var(--sage);width:22%">4.5–8s 2段細節慢搖</div>
+      <div class="clip" style="background:var(--gold);width:16%">8–11s 金句全屏</div>
+      <div class="clip" style="background:var(--plum);width:14%">11–13s 收束鏡頭</div>
+    </div>
+    <small>要點：文字用「淡入」不用「彈跳」；BGM 音量壓到 -20dB 不搶戲；金句出現時音樂做一個微停頓（ducking）。</small>
+  </div>
+  <div class="beatcard">
+    <h4>配方 B · Aesthetic 蒙太奇型（Dear diary 類）</h4>
+    <small>節奏：跟拍點切鏡，快剪 8–12 段</small>
+    <div class="timeline">
+      <div class="clip" style="background:var(--terra);width:8%">0.8s</div>
+      <div class="clip" style="background:var(--sage);width:8%">0.8s</div>
+      <div class="clip" style="background:var(--gold);width:8%">0.8s</div>
+      <div class="clip" style="background:var(--plum);width:8%">0.8s</div>
+      <div class="clip" style="background:var(--terra);width:8%">0.8s</div>
+      <div class="clip" style="background:var(--sage);width:8%">0.8s</div>
+      <div class="clip" style="background:var(--gold);width:8%">0.8s</div>
+      <div class="clip" style="background:var(--plum);width:8%">0.8s</div>
+      <div class="clip" style="background:var(--terra);width:8%">0.8s</div>
+      <div class="clip" style="background:var(--ink2);width:12%">收尾1.2s</div>
+    </div>
+    <small>要點：CapCut 開「節拍」自動對齊；每段 0.7–0.9 秒；文字「Dear diary, I love my life」逐字跟節拍彈出。</small>
+  </div>
+  <div class="beatcard">
+    <h4>配方 C · 微敘事 5–12 秒型（高重播率）</h4>
+    <small>節奏：極速鉤子 + 一個反轉</small>
+    <div class="timeline">
+      <div class="clip" style="background:var(--terra);width:30%">0–3s 強鉤子</div>
+      <div class="clip" style="background:var(--sage);width:35%">3–6.5s 鋪墊</div>
+      <div class="clip" style="background:var(--gold);width:20%">6.5–9s 反轉</div>
+      <div class="clip" style="background:var(--plum);width:15%">9–11s 留白loop</div>
+    </div>
+    <small>要點：結尾畫面接回開頭畫面形成 loop，誘導重播；caption 補完整價值。</small>
+  </div>
+  <div class="beatcard">
+    <h4>配方 D · Carousel 排版節奏（Post 專用）</h4>
+    <small>節奏：滑動停留 = 完播率的 Post 版</small>
+    <div class="timeline">
+      <div class="clip" style="background:var(--terra);width:20%">圖1 封面承諾</div>
+      <div class="clip" style="background:var(--sage);width:16%">圖2</div>
+      <div class="clip" style="background:var(--gold);width:16%">圖3</div>
+      <div class="clip" style="background:var(--sage);width:16%">圖4</div>
+      <div class="clip" style="background:var(--plum);width:16%">圖5 金句</div>
+      <div class="clip" style="background:var(--ink2);width:16%">圖末 save prompt</div>
+    </div>
+    <small>要點：一圖一意（5 秒讀完）；封面用「具體承諾」不是「Instagram tips」；最後一圖放 save prompt。色調字體全卷一致 = trust signal。</small>
+  </div>
+  <div class="card">
+    <h3>轉場庫（只用這 4 個，別過度）</h3>
+    <ul class="rules">
+      <li><b>硬切（最常用）。</b>跟拍點直接切，最乾淨，aesthetic 首選。</li>
+      <li><b>淡入淡出。</b>用於段落分隔，情緒型 Reel 內最多用 2 次。</li>
+      <li><b>遮擋轉場。</b>主體經過鏡頭（柱子/手/門），自然過場，旅行 Reel 神技。</li>
+      <li><b>速度坡度。</b>慢→正常→慢，給情緒鏡頭加重量，CapCut「曲線變速」。</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>15 分鐘出片法（效率鐵律）</h3>
+    <ul class="rules">
+      <li><b>第 0–2 分：</b>選 1 個 CapCut 模板（別從零搭），匯入 5–8 段素材自動對齊。</li>
+      <li><b>第 2–6 分：</b>替換素材、調順序，確保每 2 秒一個變化。</li>
+      <li><b>第 6–10 分：</b>加文字層（鉤子 + 金句），用 IG 安全區避免被擋。</li>
+      <li><b>第 10–13 分：</b>自動字幕 + 校對，BGM 音量壓到 -20dB。</li>
+      <li><b>第 13–15 分：</b>導出 1080p / 30fps，直接發 IG。</li>
+    </ul>
+    <div class="note" style="margin-top:14px"><b>鐵律：</b>超過 15 分鐘就停。完美是發布的敵人——發 10 條 80 分的，比發 1 條 100 分的增長快 10 倍。</div>
+  </div>
+</section>
+
+<section class="zone" id="z-data">
+  <div class="zone-head"><h2>數據復盤</h2><p>每天發完 2 小時填一次 · 7 天結算 · 自動存在本機</p></div>
+  <div class="card">
+    <h3>只追 4 個指標（別被讚數騙了）</h3>
+    <div class="shotgrid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+      <div class="shotcard"><b>① Saves 收藏</b>最值錢——代表「有用」，演算法最愛推。目標＞1%</div>
+      <div class="shotcard"><b>② Shares 分享</b>代表「認同/想讓某人看」。目標＞2%</div>
+      <div class="shotcard"><b>③ Watch time 完播</b>代表「節奏對不對」。目標＞70% for &lt;15s</div>
+      <div class="shotcard"><b>④ Comments 留言</b>代表「共鳴度」。共情型目標＞1%</div>
+    </div>
+    <small>讚數只看趨勢不看絕對值。粉絲數是副產品，不是北極星。</small>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>每條內容復盤表（可填）</h3>
+    <small>填完自動存。每週日看哪條 Saves/Shares 最高，那就是你的爆款公式，加倍複製。</small>
+    <table class="data" id="dataTable">
+      <thead><tr><th>日期</th><th>標題/主題</th><th>格式</th><th>播放</th><th>收藏</th><th>分享</th><th>留言</th><th>完播%</th><th>複盤</th></tr></thead>
+      <tbody id="dataBody"></tbody>
+    </table>
+    <button class="copy" id="addRow" style="margin-top:12px">+ 新增一列</button>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>每週復盤 5 問（週日晚做）</h3>
+    <ul class="rules">
+      <li>這週 Saves 最高的是哪條？它的<strong>共情點</strong>是什麼？能再拍一次嗎？</li>
+      <li>Shares 最高的是哪條？它的<strong>利他點</strong>是什麼？下週做一個系列。</li>
+      <li>完播最低的是哪條？前 2 秒的<strong>鉤子</strong>出了什麼問題？</li>
+      <li>留言區被提最多的是什麼？那就是下週的選題。</li>
+      <li>哪個支柱這週沒發？哪個格式（Reel/Post）沒發？下週補上，保持演算法對你的清晰識別。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="zone" id="z-cal">
+  <div class="zone-head"><h2>4 週內容日曆</h2><p>每週 4 條 · 支柱輪替 · Reel+Post 混搭 · 點格子直接寫計畫，自動儲存</p></div>
+  <div class="card"><div class="cal" id="cal"></div></div>
+  <div class="note"><b>排程邏輯：</b>週一 Reel 想法型(comment) + 週三 Post 好去處輪播(save) + 週五 Reel aesthetic 蒙太奇(share) + 週六 Post/Reel 旅行生活(share)。最佳發布：工作日 19:00–21:00、週末 11:00–13:00。</div>
+</section>
+
+<section class="zone" id="z-hist">
+  <div class="zone-head"><h2>歷史選題 · Archive</h2><p>每日刷新時自動存檔舊的「自動發現」選題 · 按日期分組 · 可回看參考 · 不會被覆蓋消失</p></div>
+  <div class="card">
+    <p class="muted" style="margin-bottom:14px">每次每日 09:00 刷新時，上一批自動發現的選題會被搬到這裡存檔（帶存檔日期）。精選選題不會進存檔，常駐選題區。最多保留 200 條。</p>
+    <div id="histList"></div>
+  </div>
+  <div class="note"><b>怎麼用歷史選題：</b>今天沒靈感時，翻存檔——很多趨勢會回潮。看到一個一週前的選題現在又熱了？那就是你的時機。點連結看參考爆款，套腳本，重做一遍。</div>
+</section>
+
+<section class="zone" id="z-insp">
+  <div class="zone-head"><h2>靈感庫</h2><p>刷到爆款就存這 · 對標帳號 · 可拆解學習</p></div>
+  <div class="insp">
+    <div class="inspcard"><b>@creators</b><small>IG 官方每週 Reels 趨勢盤點，最權威</small></div>
+    <div class="inspcard"><b>@myanichol</b><small>每週 trending audio 彙整</small></div>
+    <div class="inspcard"><b>@karbrulhart</b><small>趨勢教學 + trending audio 教學</small></div>
+    <div class="inspcard"><b>slayingsocial.com</b><small>持續更新的 Reels 趨勢清單（本工作台數據源）</small></div>
+    <div class="inspcard"><b>panoslice.com</b><small>2026 Carousel 趨勢（scrapbook/polaroid/editorial 排版）</small></div>
+    <div class="inspcard"><b>postunreel.com</b><small>驅動 Saves/Shares 的 Carousel 想法清單</small></div>
+    <div class="inspcard"><b>CapCut 模板庫</b><small>搜「aesthetic」「slowmo」「cinematic」直接套模板出片</small></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>我的爆款拆解本（可填）</h3>
+    <small>刷到想學的爆款，貼連結 + 拆解，自動存。</small>
+    <table class="data" id="refTable">
+      <thead><tr><th>連結 / 帳號</th><th>共情點</th><th>利他點</th><th>可借鑑的點</th></tr></thead>
+      <tbody id="refBody"></tbody>
+    </table>
+    <button class="copy" id="addRef" style="margin-top:12px">+ 新增一列</button>
+  </div>
+  <div class="note" style="margin-top:16px"><b>靈感不是抄襲：</b>拆解「為什麼這條會爆」（共情點/利他點/鉤子/節奏），再用你自己的素材和語言重做一遍。借的是結構，不是內容。</div>
+  <div class="card" style="margin-top:16px">
+    <h3>資料備份 / 跨設備搬移</h3>
+    <small>你填的清單 / 數據表 / 日曆都存在「這台設備的瀏覽器」裡。換設備時：在舊設備按「匯出」下載檔案，傳給自己（Line/郵件/雲端），在新設備按「匯入」讀回來。</small>
+    <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center">
+      <button class="copy" id="exportData">⬇ 匯出我的資料</button>
+      <label class="copy" style="cursor:pointer;display:inline-flex;align-items:center">⬆ 匯入資料<input type="file" id="importData" accept="application/json,.json" style="display:none"></label>
+      <button class="copy" id="clearData" style="background:#b03a2e">🗑 清除本機資料</button>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div id="exToast" class="ex-toast" role="dialog" aria-live="polite">
+  <div class="ex-toast-title">🔗 參考鏈接已複製到剪貼簿</div>
+  <a class="ex-url-a" href="#" target="_blank" rel="noopener">—</a>
+  <div class="ex-toast-hint">已自動複製網址。在瀏覽器網址列貼上即可開啟；或直接點擊上方藍色鏈接打開（若預覽環境擋住彈窗，貼上即可）。</div>
+  <div class="ex-toast-bar">
+    <button class="ex-toast-copy" onclick="exToastCopy()">📋 再複製一次</button>
+    <button class="ex-toast-close" onclick="document.getElementById('exToast').classList.remove('show')">關閉</button>
+  </div>
+</div>
+
+<script>
+/* ---------- 趨勢數據（含 typ 格式 + ex 參考連結）---------- */
+const TRENDS = [
+  {cur:true,t:"It's very important that you…",f:"hot",p:"thoughts",typ:"reel",fmt:"Reel·文字反思",emp:"20幾歲的迷茫、選擇與成長——每個人都在經歷",alt:"給同齡人一句「你會沒事的」的話語",hook:"In your 20s, you will be [__]. It is important that you [go/say/yes].",why:"comment-bait·留言共鳴爆發",ex:"https://www.instagram.com/reel/DQsCSuCEgWH/"},
+  {cur:true,t:"Almost forgot this was the whole point",f:"hot",p:"all",typ:"reel",fmt:"Reel·畫面蒙太奇",emp:"忙碌中忘了初心，回望生活的意義",alt:"提醒觀眾什麼才是真正重要的",hook:"幾段最珍貴的畫面 + 文字「Almost forgot this was the whole point」",why:"share-bait·轉發給在乎的人",ex:"https://www.instagram.com/reel/DI4WG72zHBd/"},
+  {cur:true,t:"Dear diary, I love my life",f:"hot",p:"all",typ:"reel",fmt:"Reel·aesthetic 蒙太奇",emp:"日常碎片的感恩，療癒感",alt:"傳遞「普通日子也值得熱愛」的信念",hook:"文字隨節奏跳出「Dear diary, I love my life」+ 快剪生活瞬間",why:"save-bait·存檔率高",ex:"https://www.instagram.com/reel/CbX62uoAKJt/"},
+  {cur:true,t:"Put this sound over a core memory",f:"hot",p:"all",typ:"reel",fmt:"Reel·回憶重剪",emp:"核心記憶的情感衝擊",alt:"邀請觀眾回想自己的 core memory",hook:"珍貴回憶片段 + 文字「Put this sound over a core memory」",why:"share-bait·情感轉發",ex:"https://www.instagram.com/reel/CdwYeU7hMUu/"},
+  {cur:true,t:"Things I do to fill my cup",f:"rise",p:"wellness",typ:"carousel",fmt:"Carousel/Reel·自我照顧清單",emp:"自我照顧的微小儀式感",alt:"給觀眾可抄作業的 self-care 清單",hook:"展示 5 件填滿自己的小事",why:"save-bait·高收藏",ex:"https://www.instagram.com/p/DNqbNV2OwnW/?img_index=2"},
+  {cur:true,t:"Who are you trying to impress?",f:"hot",p:"thoughts",typ:"reel",fmt:"Reel·雙鏡頭",emp:"努力背後是內在小孩的渴望",alt:"釋放「不必討好所有人」的解脫感",hook:"第一鏡努力 +「為誰這麼拼？」第二鏡小時候的自己「him/her」",why:"comment-bait·深度共鳴",ex:"https://www.instagram.com/reel/DMbBpG2xFUJ/"},
+  {cur:true,t:"Doesn't know it yet",f:"rise",p:"thoughts",typ:"reel",fmt:"Reel·時序敘事",emp:"命運轉折的後知後覺",alt:"給處於低谷者一個「轉機要來了」的安慰",hook:"某個平凡鏡頭 + 文字描述不久後發生的大轉變",why:"share-bait·轉發給正在熬的人",ex:"https://www.instagram.com/reel/DHdqBKjuLyH/"},
+  {cur:true,t:"When you finally realize…",f:"ev",p:"thoughts",typ:"reel",fmt:"Reel·頓悟式",emp:"成長後的清醒認知",alt:"用一句話點醒還沒想通的人",hook:"「When you finally realize [__]」+ 一個畫面",why:"save-bait·金句收藏",ex:"https://www.instagram.com/reel/ChDRdWFjijc/"},
+  {cur:true,t:"Not ashamed to admit…",f:"rise",p:"thoughts",typ:"reel",fmt:"Reel·坦白式",emp:"卸下完美的脆弱感",alt:"讓觀眾覺得「原來不是只有我這樣」",hook:"「I'm [age] and not ashamed to admit…」+ caption 列坦白清單",why:"comment-bait·留言坦白",ex:"https://www.instagram.com/reel/DFb4JFryx-h/"},
+  {cur:true,t:"Here's my coffee",f:"ev",p:"food",typ:"reel",fmt:"Reel·aesthetic 靜物",emp:"晨間儀式的安定感",alt:"推薦好咖啡 + 當下在讀的書（利他推薦）",hook:"咖啡 + 書 + 隨音樂節奏跳出文字",why:"save-bait·咖啡書單收藏",ex:"https://www.instagram.com/reel/Cbu4iXZtCs1/"},
+  {cur:true,t:"Humans saw this and invented…",f:"rise",p:"travel",typ:"reel",fmt:"Reel·壯麗自然",emp:"自然之美的敬畏",alt:"標記絕美景點 + 反差幽默（利他娛樂）",hook:"壯麗景色 +「humans saw this and invented [Excel / Microsoft Teams]」",why:"share-bait·轉發驚嘆",ex:"https://www.instagram.com/reel/C_L-fVaSx4j/"},
+  {cur:true,t:"I call it life",f:"ev",p:"all",typ:"reel",fmt:"Reel·活著瞬間",emp:"「真正活著」的瞬間感",alt:"激發觀眾也去尋找自己的「活著時刻」",hook:"一個讓你覺得真正活著的瞬間 + 文字「I call it life」",why:"save-bait·情感收藏",ex:"https://www.instagram.com/reel/Cbmm883g_Dz/"},
+  {cur:true,t:"Loud photos vs quiet photos",f:"rise",p:"all",typ:"carousel",fmt:"Carousel/Reel·對比式",emp:"人有多面性的自我接納",alt:"讓觀眾看見「安靜的那面也很美」",hook:"高能量照片 vs 低能量照片 對比",why:"share-bait·認同轉發",ex:"https://www.instagram.com/reel/CjKatq1pKJ3/"},
+  {cur:true,t:"Walking Reels（獨特視角/高低差）",f:"hot",p:"travel",typ:"reel",fmt:"Reel·走路+文字鉤子",emp:"漫步中的放空感",alt:"順帶介紹地點/路線（利他攻略）",hook:"創意角度走路鏡頭 + 文字鉤子",why:"watch-time·高完播",ex:"https://slayingsocial.com/instagram-reels-trends/"},
+  {cur:true,t:"Micro-storytelling（5–12秒）",f:"hot",p:"all",typ:"reel",fmt:"Reel·微敘事",emp:"一個濃縮的情緒點",alt:"極短給出價值/共鳴",hook:"5–12秒 + 粗體caption + trending audio",why:"re-watch·高重播率",ex:"https://slayingsocial.com/instagram-reels-trends/"},
+  {cur:true,t:"Nostalgia / Retro aesthetic",f:"hot",p:"all",typ:"reel",fmt:"Reel·復古濾鏡",emp:"懷舊情緒連結",alt:"喚起集體記憶",hook:"復古濾鏡 + Y2K + 懷舊音樂",why:"save-bait·美學收藏",ex:"https://www.instagram.com/reel/C0owP0Ku5-g/"},
+  {cur:true,t:"Aesthetic photo dump · 日常碎片",f:"hot",p:"all",typ:"carousel",fmt:"Carousel·生活碎片",emp:"「沒有大事發生的一天也值得記錄」的療癒",alt:"給觀眾一種「原來這樣也能發」的安心感",hook:"6–10 張同色系日常靜圖，無序但有美感，封面一句「a tuesday」",why:"save-bait·美學收藏",ex:"https://www.lemon8-app.com/discover/aesthetic%20instagram%20photo%20dump%20ideas?region=us"},
+  {cur:true,t:"Polaroid travel journal · 拍立得旅行手帳",f:"rise",p:"travel",typ:"carousel",fmt:"Carousel·scrapbook 排版",emp:"旅行的手作溫度感，像翻一本日記",alt:"標記地點 + 路線 + 一句話亮點（利他攻略）",hook:"拍立得框 + 手寫字 + 地圖貼紙，每張一個地點",why:"save-bait·高收藏攻略",ex:"https://www.panoslice.com/post/the-biggest-instagram-carousel-trends-of-2026"},
+  {cur:true,t:"Quote card · 一張圖一句話",f:"ev",p:"thoughts",typ:"post",fmt:"Post·文字靜圖",emp:"一句話說中全場的共鳴",alt:"讓人截圖轉發給懂的人",hook:"aesthetic 背景圖 + 衬線大字一句金句（例「you're not behind.」）",why:"share-bait·轉發爆發",ex:"https://www.instagram.com/p/DdO18JUHxI1/"},
+  {cur:true,t:"City guide · 5 個安靜的好去處",f:"ev",p:"food",typ:"carousel",fmt:"Carousel·好去處攻略",emp:"「不知去哪」的焦慮被解決",alt:"可直接照去的店名+地址+亮點清單",hook:"封面大字「城市裡 5 個讓你安靜的地方」+ 每圖一店",why:"save-bait·超級收藏",ex:"https://www.instagram.com/p/Dc48me2k0e1/"},
+  {cur:true,t:"Before &amp; after · 我的一日儀式",f:"rise",p:"wellness",typ:"carousel",fmt:"Carousel·前後對比",emp:"「原來改變是看得到的」的激勵",alt:"給觀眾可照做的 routine 步驟",hook:"圖1 before（雜亂/疲憊）→ 圖3 after（整齊/清醒）中間夾步驟",why:"save-bait·可照做",ex:"https://postunreel.com/blog/instagram-carousel-ideas"},
+  {cur:true,t:"What I eat in a day · aesthetic 食記",f:"rise",p:"food",typ:"carousel",fmt:"Carousel·美食日記",emp:"「好好吃飯也是愛自己」的共鳴",alt:"每餐標店名/食譜（利他收藏）",hook:"3–5 餐俯拍 + 一句話心情，色調統一",why:"save-bait·收藏食譜",ex:"https://postunreel.com/blog/instagram-carousel-ideas"},
+  {cur:true,t:"Cinematic 3-panel · 微故事三聯畫",f:"rise",p:"travel",typ:"carousel",fmt:"Carousel·三聯畫",emp:"三張圖說一個小故事的詩意",alt:"示範「如何用最少鏡頭講故事」",hook:"圖1 遠景(環境) → 圖2 中景(自己) → 圖3 細節(物件)，一句caption串起",why:"share-bait·美學轉發",ex:"https://www.panoslice.com/post/the-biggest-instagram-carousel-trends-of-2026"},
+  {cur:true,t:"Things nobody tells you about your 20s",f:"hot",p:"thoughts",typ:"carousel",fmt:"Carousel·文字卡",emp:"「原來不是只有我這樣想」的釋然",alt:"5–6 條真誠建議，可收藏反覆看",hook:"封面「nobody tells you about your 20s」→ 每圖一條",why:"save-bait·高收藏金句",ex:"https://postunreel.com/blog/instagram-carousel-ideas"},
+  {cur:true,t:"Flat lay aesthetic · 桌面平鋪",f:"ev",p:"all",typ:"post",fmt:"Post·俯拍靜物",emp:"「生活的質感藏在細節裡」",alt:"推薦好物（書/咖啡/香氛）利他清單放 caption",hook:"一張俯拍桌面 + caption 列物品",why:"save-bait·好物收藏",ex:"https://www.panoslice.com/post/the-biggest-instagram-carousel-trends-of-2026"},
+  {cur:true,t:"Photo of the week · 一週一張",f:"ev",p:"all",typ:"post",fmt:"Post·單圖+反思",emp:"一週選一張最愛的，配一段心情",alt:"邀請觀眾分享他們本週的一張",hook:"一張強照片 + 一段真誠 caption +「你本週最難忘的一張是什麼？」",why:"comment-bait·留言互動",ex:"https://www.instagram.com/p/Dck82RHEsLZ/"},
+  {cur:false,t:"“Blame it on the Phone” Trend*",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"日常共鳴情緒——讓人覺得「這在說我」",alt:"可收藏/轉發的價值點",hook:"“Blame it on the Phone” Trend*",why:"trending now",ex:"https://www.instagram.com/reel/ClaN2vPO6kw/?igshid=MWI4MTIyMDE="},
+  {cur:false,t:"Introduce Yourself as Your Middle Name Trend* Example:",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"自我照顧的微小儀式感",alt:"給觀眾可抄作業的清單",hook:"Introduce Yourself as Your Middle Name Trend* Example:",why:"trending now",ex:"https://www.instagram.com/reel/CjgvFAcPAl_/?igshid=YmMyMTA2M2Y="},
+  {cur:false,t:"“When You Finally Realize” Trend",f:"rise",p:"thoughts",typ:"reel",fmt:"Reel (新發現)",emp:"成長期的迷茫與自我和解——人人都在經歷",alt:"給同齡人一句「你會沒事的」的安慰",hook:"“When You Finally Realize” Trend",why:"trending now",ex:"https://www.instagram.com/reel/ChDRdWFjijc/?igshid=MDJmNzVkMjY="},
+  {cur:false,t:"Bubble Butt* Trend*",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"日常共鳴情緒——讓人覺得「這在說我」",alt:"可收藏/轉發的價值點",hook:"Bubble Butt* Trend*",why:"trending now",ex:"https://www.instagram.com/reel/Cgc-IaMra_V/?igshid=MDJmNzVkMjY="},
+  {cur:false,t:"“You’re Not One of These” Trend*",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"日常共鳴情緒——讓人覺得「這在說我」",alt:"可收藏/轉發的價值點",hook:"“You’re Not One of These” Trend*",why:"trending now",ex:"https://www.instagram.com/reel/CgsRI-PJhrn/?igshid=MDJmNzVkMjY="},
+  {cur:false,t:"Mixing Trend*",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"日常共鳴情緒——讓人覺得「這在說我」",alt:"可收藏/轉發的價值點",hook:"Mixing Trend*",why:"trending now",ex:"https://www.instagram.com/reel/CgfSmIIpRIf/?igshid=MDJmNzVkMjY="},
+  {cur:false,t:"“I Miss the Girl You Were” Trend*",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"日常共鳴情緒——讓人覺得「這在說我」",alt:"可收藏/轉發的價值點",hook:"“I Miss the Girl You Were” Trend*",why:"trending now",ex:"https://www.instagram.com/reel/Cew2gdpp-Q6/?igshid=YmMyMTA2M2Y="},
+  {cur:false,t:"Put This Sound Over a Memory You Can’t Stop Thinking About” Trend",f:"rise",p:"thoughts",typ:"reel",fmt:"Reel (新發現)",emp:"對日常與回憶的感恩，療癒感",alt:"提醒觀眾什麼才是真正重要的",hook:"Put This Sound Over a Memory You Can’t Stop Thinking About” Trend",why:"trending now",ex:"https://www.instagram.com/reel/CaxVtphg5kv/?igshid=YmMyMTA2M2Y%3D"},
+  {cur:false,t:"“Ima Need Another Minute” Trend",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"日常共鳴情緒——讓人覺得「這在說我」",alt:"可收藏/轉發的價值點",hook:"“Ima Need Another Minute” Trend",why:"trending now",ex:"https://www.instagram.com/reel/Cd1RnmfDDFU/?igshid=YmMyMTA2M2Y="},
+  {cur:false,t:"“Beyond Brilliant Idea” Trend",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"日常共鳴情緒——讓人覺得「這在說我」",alt:"可收藏/轉發的價值點",hook:"“Beyond Brilliant Idea” Trend",why:"trending now",ex:"https://www.instagram.com/reel/CZf0Ci5pIXm/?igshid=YmMyMTA2M2Y="},
+  {cur:false,t:"“Put This Sound Over a Core Memory” Trend",f:"rise",p:"thoughts",typ:"reel",fmt:"Reel (新發現)",emp:"對日常與回憶的感恩，療癒感",alt:"提醒觀眾什麼才是真正重要的",hook:"“Put This Sound Over a Core Memory” Trend",why:"trending now",ex:"https://www.instagram.com/reel/CdwYeU7hMUu/?igshid=YmMyMTA2M2Y="},
+  {cur:false,t:"“I Call it Life” Trend",f:"rise",p:"thoughts",typ:"reel",fmt:"Reel (新發現)",emp:"日常共鳴情緒——讓人覺得「這在說我」",alt:"可收藏/轉發的價值點",hook:"“I Call it Life” Trend",why:"trending now",ex:"https://www.instagram.com/reel/Cbmm883g_Dz/?igshid=YmMyMTA2M2Y="},
+  {cur:false,t:"Here’s My Coffee” Trend",f:"rise",p:"food",typ:"reel",fmt:"Reel (新發現)",emp:"晨間儀式的安定感",alt:"推薦好去處/好物（利他收藏）",hook:"Here’s My Coffee” Trend",why:"trending now",ex:"https://www.instagram.com/reel/Cbu4iXZtCs1/?igshid=YmMyMTA2M2Y="},
+  {cur:false,t:"“Everyday” Trend",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"日常共鳴情緒——讓人覺得「這在說我」",alt:"可收藏/轉發的價值點",hook:"“Everyday” Trend",why:"trending now",ex:"https://www.instagram.com/reel/CdWMrOjpUTH/?igshid=YmMyMTA2M2Y="},
+  {cur:false,t:"“Do It With Pizzazz” Trend*",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"日常共鳴情緒——讓人覺得「這在說我」",alt:"可收藏/轉發的價值點",hook:"“Do It With Pizzazz” Trend*",why:"trending now",ex:"https://www.instagram.com/reel/Cdgu6UBA0fh/?igshid=YmMyMTA2M2Y="},
+  {cur:false,t:"“She’s Buff” Trend*",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"日常共鳴情緒——讓人覺得「這在說我」",alt:"可收藏/轉發的價值點",hook:"“She’s Buff” Trend*",why:"trending now",ex:"https://www.instagram.com/reel/CdinIogIILe/?igshid=YmMyMTA2M2Y="},
+  {cur:false,t:"“Like That” Trend*",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"日常共鳴情緒——讓人覺得「這在說我」",alt:"可收藏/轉發的價值點",hook:"“Like That” Trend*",why:"trending now",ex:"https://www.instagram.com/reel/CdGYytIDBZy/?igshid=YmMyMTA2M2Y="},
+  {cur:false,t:"“I’m Gonna Have to Go and Disagree With You There” Trend",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"日常共鳴情緒——讓人覺得「這在說我」",alt:"可收藏/轉發的價值點",hook:"“I’m Gonna Have to Go and Disagree With You There” Trend",why:"trending now",ex:"https://www.instagram.com/reel/Cc6fFFEpWkT/?igshid=YmMyMTA2M2Y="},
+  {cur:false,t:"“It’s So Far a Masterpiece” Trend",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"日常共鳴情緒——讓人覺得「這在說我」",alt:"可收藏/轉發的價值點",hook:"“It’s So Far a Masterpiece” Trend",why:"trending now",ex:"https://www.instagram.com/reel/Cc3RImQp18p/?igshid=YmMyMTA2M2Y="},
+  {cur:false,t:"“Dear Diary, I Love My Life” Trend",f:"rise",p:"thoughts",typ:"reel",fmt:"Reel (新發現)",emp:"對日常與回憶的感恩，療癒感",alt:"提醒觀眾什麼才是真正重要的",hook:"“Dear Diary, I Love My Life” Trend",why:"trending now",ex:"https://www.instagram.com/reel/CbX62uoAKJt/?igshid=YmMyMTA2M2Y="}
+];
+const FMAP={hot:['🔥 hot','hot'],rise:['🌡 rising','rise'],ev:['⭐ evergreen','ev']};
+const PMAP={thoughts:'想法',travel:'旅行',food:'美食',wellness:'健康',all:'全支柱'};
+const TMAP={reel:['Reel','reel'],post:['Post','post'],carousel:['Carousel','carousel']};
+
+/* ---------- 參考鏈接：複製 + toast（預覽環境擋 target=_blank 時的後備）---------- */
+var _exToastUrl='';
+function openEx(url,ev){
+  if(ev){ev.stopPropagation();}
+  _exToastUrl=url;
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url);}}catch(e){}
+  var t=document.getElementById('exToast');
+  if(t){
+    var a=t.querySelector('.ex-url-a');a.href=url;a.textContent=url;
+    t.classList.add('show');
+    clearTimeout(t._t);
+    t._t=setTimeout(function(){t.classList.remove('show')},8000);
+  }
+  /* 預設動作（開新分頁）在本地瀏覽器會照常執行；預覽環境擋住時 toast + 剪貼簿已就緒 */
+  return true;
+}
+function exToastCopy(){
+  if(_exToastUrl&&navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(_exToastUrl);}
+  var b=document.querySelector('.ex-toast-copy');if(b){var o=b.textContent;b.textContent='✓ 已複製';setTimeout(function(){b.textContent=o},1200);}
+}
+
+function renderTrends(filter,onlyHot,typeFilter){
+  const list=document.getElementById('tlist');list.innerHTML='';
+  let arr=TRENDS.filter(t=>(filter==='all'||t.p===filter||t.p==='all')&&(!onlyHot||t.f==='hot')&&(typeFilter==='all'||t.typ===typeFilter));
+  document.getElementById('stTrends').textContent=arr.length;
+  if(!arr.length){list.innerHTML='<div class="h-empty">這個過濾條件下暫無選題，換一個看看 👀</div>';return;}
+  arr.forEach((t,i)=>{
+    const[ft,fc]=FMAP[t.f];
+    const[tt,tc]=TMAP[t.typ]||['',''];
+    const badge=t.cur?'<span class="tag gold">精選</span>':'<span class="tag ink">新發現</span>';
+    const exBtn=t.ex?'<a class="ex-link" href="'+t.ex+'" target="_blank" rel="noopener" onclick="openEx(this.href,event)">🔗 參考爆款</a>':'';
+    const d=document.createElement('div');d.className='trend';
+    d.innerHTML='<div class="trend-top"><div><h3>'+t.t+'</h3><div class="meta"><span class="typb '+tc+'">'+tt+'</span> '+t.fmt+' · '+PMAP[t.p]+'</div></div><div>'+badge+'<span class="fresh '+fc+'" style="margin-left:6px">'+ft+'</span></div></div><div class="row"><div><b>共情角度 Empathy</b>'+t.emp+'</div><div><b>利他角度 Altruism</b>'+t.alt+'</div></div><div class="hook">'+t.hook+'</div><div class="why"><span class="tag">'+t.why+'</span>'+exBtn+'</div>';
+    d.onclick=function(){navigator.clipboard&&navigator.clipboard.writeText(t.hook);d.style.borderColor='var(--sage)';setTimeout(function(){d.style.borderColor=''},900)};
+    list.appendChild(d);
+  });
+}
+renderTrends('all',false,'all');
+
+/* ---------- 腳本數據（含 storyline / 螢幕文字 / 表達方式 / 雙語 caption）---------- */
+const SCRIPTS=[
+  {
+    title:"腳本 A ·「In your 20s, it is important that you…」文字反思 Reel",
+    src:"It's very important that you… trend",fmt:"Reel · 13s",rhythm:"配方A·慢→金句",typ:"reel",
+    storyline:"一個人在20多歲的某個平凡瞬間，從迷茫走到「繼續走就對了」的釋然。故事線：迷茫(鉤子)→停頓(共鳴)→細節(放大)→金句(昇華)→留白(開放結尾)。觀眾看完覺得「這在說我」，並想留下一個🤎。",
+    shots:[["0–2s","你自己走路的背影或望窗外的側臉（順光，慢搖）"],["2–5s","桌面細節：咖啡杯/書/光斑，慢搖鏡頭"],["5–8s","另一段生活空鏡：街道/天空/植物"],["8–11s","你坐在某處安靜的正面（可虛焦）"],["11–13s","遠景或收束空鏡，留白"]],
+    onscreen:[
+      {t:"In your 20s…",pos:"置中偏上",font:"衬線白字",anim:"淡入 0.4s",time:"0–2s"},
+      {t:"…you will be lost.",pos:"置中",font:"衬線白字",anim:"淡入 0.4s",time:"2–5s"},
+      {t:"It is important that you keep going.",pos:"全屏置中",font:"衬線大字",anim:"淡入 0.6s + 微放大",time:"8–11s"},
+      {t:"you're not behind.",pos:"右下小字",font:"衬線灰字",anim:"淡入",time:"11–13s"}
+    ],
+    express:"語氣：安靜、像在跟自己說話。不要旁白念稿——讓文字自己浮現，BGM 說話。BGM：純鋼琴或 ambient，音量 -20dB 不搶戲。節奏：慢，每鏡 2.5–3s，給觀眾時間讀字+感受。金句出現時 BGM 做一個微停頓（ducking）加重份量。",
+    caption:"20幾歲的時候，你會迷路、會懷疑、會覺得別人都比你快。\n\n但後來會發現——\n走慢一點，不是落後，是在認路。\n\nIt is important that you keep going. 🤎\n\n留下一個「🤎」如果你現在也在路上。\n\n— EN —\nIn your 20s, you'll feel lost. You'll think everyone's ahead.\n\nBut going slow isn't falling behind — it's finding your way.\n\nKeep going. 🤎\n\nDrop a 🤎 if you're on the road too.",
+    hash:"#20幾歲 #生活感悟 #共鳴 #aesthetic #reels #inyour20s",
+    ex:"https://www.instagram.com/reel/DQsCSuCEgWH/",
+    notes:"用 Dazz Cam 拍；BGM 選純鋼琴輕音樂；文字字體用 IG 內建衬線；全片不超過 13 秒。金句用全屏置中，安全區內避免被 IG UI 擋。"
+  },
+  {
+    title:"腳本 B ·「Dear diary, I love my life」Aesthetic 蒙太奇",
+    src:"Dear diary trend",fmt:"Reel · 10s",rhythm:"配方B·快剪跟拍點",typ:"reel",
+    storyline:"一天裡的 10 個微小瞬間，跟著節拍跳字「Dear / diary, / I / love / my / life」。沒有劇情，只有「普通日子也值得熱愛」的詩意。觀眾看完想存起來當生活的參考。",
+    shots:[["0.8s","晨光拉窗簾"],["0.8s","手沖咖啡冒煙"],["0.8s","窗外樹影"],["0.8s","你翻書的手"],["0.8s","街上走路腳"],["0.8s","食物俯拍"],["0.8s","海或天空"],["0.8s","你笑的側臉"],["0.8s","夜景燈火"],["1.2s","收束空鏡+文字"]],
+    onscreen:[
+      {t:"Dear",pos:"置中",font:"衬線白字",anim:"跟拍點彈出",time:"0.8s"},
+      {t:"diary,",pos:"置中",font:"衬線白字",anim:"跟拍點彈出",time:"0.8s"},
+      {t:"I / love / my",pos:"置中",font:"衬線白字",anim:"跟拍點逐字彈出",time:"0.8s×3"},
+      {t:"life 🤎",pos:"全屏置中大字",font:"衬線白字",anim:"彈出+微放大",time:"收尾1.2s"}
+    ],
+    express:"語氣：輕快、感恩、不矯情。完全不用旁白。BGM 用 trend 原音（節奏感強）。節奏：嚴格每段 0.8s 跟拍點切，文字逐字彈出。色調全卷統一暖米（Lightroom preset）。",
+    caption:"沒有什麼大事發生的一天。\n窗簾透進的光、咖啡的煙、書裡的一句話。\n\n原來這就是「過得很好」的樣子。\n\nDear diary, I love my life.\n\n— EN —\nA day where nothing big happened.\nThe light through the curtains, the steam from coffee, a line from a book.\n\nTurns out this is what「doing well」looks like.\n\nDear diary, I love my life.",
+    hash:"#deardiary #aesthetic #lifestyle #日常 #治癒",
+    ex:"https://www.instagram.com/reel/CbX62uoAKJt/",
+    notes:"CapCut 開節拍對齊；每段嚴格 0.8s；BGM 用原 trend 音；色調統一暖米。每段都是不同主體，避免重複。"
+  },
+  {
+    title:"腳本 C ·「5 個安靜的好去處」城市咖啡館 Carousel",
+    src:"Saveable spots carousel",fmt:"Carousel · 5圖",rhythm:"配方D·一圖一意+save prompt",typ:"carousel",
+    storyline:"讀者不知去哪的焦慮，被一張張店卡解決。每圖一間店：店名+地址+一句亮點。最後一圖 save prompt。觀眾看完直接收藏，下週照著去。",
+    shots:[["圖1","封面：一間店最美角落+大字「城市裡5個讓你安靜的地方」"],["圖2","店1：門面+店名+地址+一句亮點"],["圖3","店2：同上格式"],["圖4","店3：同上格式"],["圖5","店4+5雙拼+「收藏起來，下次不知去哪就翻這篇」"]],
+    onscreen:[
+      {t:"城市裡 5 個讓你安靜的地方",pos:"圖1上1/3",font:"衬線大字",anim:"靜態",time:"封面"},
+      {t:"[店名] · [地址]",pos:"每圖上1/3",font:"衬線中字",anim:"靜態",time:"圖2–4"},
+      {t:"[一句亮點：例 陽光最好的窗邊位]",pos:"每圖下2/3",font:"無衬線小字",anim:"靜態",time:"圖2–4"},
+      {t:"收藏起來，下次不知去哪就翻這篇 ☕",pos:"圖5置中",font:"衬線字",anim:"靜態",time:"圖5"}
+    ],
+    express:"語氣：像朋友推薦私藏，不是廣告。每圖字要少——店名+一句話就夠。色調全卷統一（同一 preset）。排版：上1/3放字、下2/3放圖，字體全用同一衬線 = trust signal。最後一圖必須有 save prompt。",
+    caption:"收藏起來，下次不知道去哪就翻這篇 ☕\n\n1. [店名] · [地址] — [亮點：例 陽光最好的窗邊位]\n2. [店名] · [地址] — [亮點]\n3. [店名] · [地址] — [亮點]\n4. [店名] · [地址] — [亮點]\n5. [店名] · [地址] — [亮點]\n\n你最常去哪一間？留言告訴我🤎\n\n— EN —\nSave this for when you don't know where to go ☕\n\n1. [Name] · [Addr] — [highlight]\n2–5. ...\n\nWhich one's your go-to? Tell me in the comments 🤎",
+    hash:"#咖啡館 #好去處 #城市生活 #[城市名] #週末去哪 #cityguide",
+    ex:"https://www.instagram.com/p/Dc48me2k0e1/",
+    notes:"利他核心=可直接照去；save-bait 設計。拍攝時順光俯拍+側拍各一；固定一個 Lightroom preset 統一色。用 Panoslice/Canva 排版模板套 polaroid 或 editorial 風。"
+  },
+  {
+    title:"腳本 D ·「Humans saw this and invented…」壯麗旅行 Reel",
+    src:"Humans saw this trend",fmt:"Reel · 7s",rhythm:"配方C·鉤子+留白",typ:"reel",
+    storyline:"開頭一個壯麗到讓人屏息的自然全景，觀眾以為是嚴肅旅行片，結尾文字「humans saw this and invented Microsoft Excel」反差幽默。共情點是對自然的敬畏，利他點是清楚地點標註。",
+    shots:[["0–3s","一個壯麗自然全景（山/海/瀑布）慢搖"],["3–5s","你站在景前的小身影（比例對比）"],["5–7s","文字爆點+收束"]],
+    onscreen:[
+      {t:"Humans saw this…",pos:"置中",font:"衬線白字",anim:"淡入 0.5s",time:"3–5s"},
+      {t:"…and invented Microsoft Excel 😮‍💨",pos:"全屏置中",font:"無衬線白字",anim:"彈出",time:"5–7s"}
+    ],
+    express:"語氣：壯麗→幽默反差。前 5s 營造史詩感（慢搖+BGM 疊加），結尾一句反差台詞破功。BGM 用 trend 原音。節奏：前慢後快。caption 補地點+交通（利他）。",
+    caption:"[地點名] 的一些瞬間。\n大自然不需要 KPI。 🌿\n\n📍 [完整地點/交通方式]\n\n— EN —\nSome moments from [place].\nNature doesn't need KPIs. 🌿\n\n📍 [full location + how to get there]",
+    hash:"#旅行 #自然 #壯麗 #humanssawthis #[地點] #travel",
+    ex:"https://www.instagram.com/reel/C_L-fVaSx4j/",
+    notes:"利他=標記清楚地點+交通；幽默反差=共情點；素材可用舊旅行庫存的 camera-roll mining。前 3s 鏡頭要穩（借力/防抖）。"
+  },
+  {
+    title:"腳本 E ·「Who are you trying to impress?」雙鏡頭 Reel",
+    src:"Who are you trying to impress trend",fmt:"Reel · 9s",rhythm:"配方A·情緒雙段",typ:"reel",
+    storyline:"第一段是你努力做事的畫面，文字問「為誰這麼拼？」；第二段切到小時候的照片，文字「him/her」。故事線：外在努力→轉向內在小孩→觀眾瞬間破防。共情核彈級，留言區會爆「我也是」。",
+    shots:[["0–4s","你努力做事的畫面（工作/健身/拍照）"],["4–6s","過渡：畫面淡出"],["6–9s","小時候的照片/影片，文字「him」或「her」"]],
+    onscreen:[
+      {t:"為誰這麼拼？\nWho are you trying to impress?",pos:"置中偏上",font:"衬線白字",anim:"淡入 0.5s",time:"0–4s"},
+      {t:"him",pos:"全屏置中大字",font:"衬線白字",anim:"淡入 0.6s",time:"6–9s"}
+    ],
+    express:"語氣：前段緊繃、後段柔軟。不用旁白。BGM 用 trend 原音（有情緒轉折的）。第二鏡找一張小時候最質樸的照片（笑容/認真臉）。節奏：前 4s 正常，後 3s 放慢或靜止，給情緒重量。",
+    caption:"後來才懂——\n拼命想證明的，從來不是給別人看。\n是給那個曾經覺得自己不夠好的小孩。\n\n你在變好，他會看到的。 🤎\n\n— EN —\nLater I realized——\nI wasn't proving anything to anyone.\nI was proving it to the kid who thought they weren't enough.\n\nYou're getting better. They'd be proud. 🤎",
+    hash:"#成長 #自我 #共鳴 #內在小孩 #growth",
+    ex:"https://www.instagram.com/reel/DMbBpG2xFUJ/",
+    notes:"共情核彈級；第二鏡找一張小時候最質樸的照片；BGM 用 trend 原音；評論區會爆「我也是」。可改成 her。"
+  },
+  {
+    title:"腳本 F ·「Things I do to fill my cup」健康清單 Carousel/Reel",
+    src:"Fill my cup trend",fmt:"Carousel · 5件事 + Reel版",rhythm:"配方B·逐項 / 配方D·一圖一事",typ:"carousel",
+    storyline:"覺得空、覺得累是普遍狀態。展示 5 件把「自己」填滿的小事，每件一個畫面。觀眾看完想收藏清單照著做。故事線：空→填滿→溫柔結尾。",
+    shots:[["段1/圖1","晨間不碰手機先喝水"],["段2/圖2","一個人在安靜的地方散步"],["段3/圖3","煮一頓給自己的飯"],["段4/圖4","讀10頁書+寫三行字"],["段5/圖5","傍晚看一次天空"]],
+    onscreen:[
+      {t:"5 件把「自己」填滿的小事",pos:"封面置中",font:"衬線大字",anim:"靜態",time:"圖1"},
+      {t:"1. 醒來不碰手機，先喝水",pos:"圖上方",font:"衬線中字",anim:"靜態",time:"圖2"},
+      {t:"2. 一個人安靜走一段路",pos:"圖上方",font:"衬線中字",anim:"靜態",time:"圖3"},
+      {t:"收藏起來，覺得空的時候挑一件做 🤎",pos:"圖末置中",font:"衬線字",anim:"靜態",time:"圖5"}
+    ],
+    express:"語氣：溫柔、不說教、像跟朋友說。每圖字少（數字+動作名）。色調暖米統一。如果做 Reel 版：每段 2s，畫面上方浮現數字+動作名，BGM 輕柔。結尾必須 save prompt。",
+    caption:"5 件把「自己」填滿的小事 🤎\n\n1. 醒來不碰手機，先喝水\n2. 一個人安靜走一段路\n3. 給自己煮一頓飯\n4. 讀 10 頁書，寫 3 行字\n5. 傍晚抬頭看一次天空\n\n收藏起來，覺得空的時候挑一件做。\n\n— EN —\n5 little things to fill your cup 🤎\n\n1. No phone first thing — drink water\n2. Walk alone, quietly\n3. Cook a meal for yourself\n4. Read 10 pages, write 3 lines\n5. Look at the sky at dusk\n\nSave this. Pick one when you feel empty.",
+    hash:"#selfcare #健康生活 #儀式感 #填滿自己 #slowliving",
+    ex:"https://www.instagram.com/p/DNqbNV2OwnW/?img_index=2",
+    notes:"利他=可直接照做清單(save-bait)；共情=「覺得空」是普遍狀態；素材可在家一天拍完。Reel+Carousel 雙發：先發 Carousel 搶 save，再剪 Reel 版搶 reach。"
+  },
+  {
+    title:"腳本 G ·「Aesthetic photo dump · a tuesday」生活碎片 Carousel",
+    src:"Photo dump trend",fmt:"Carousel · 6–10圖",rhythm:"配方D·無序但有美感+save prompt",typ:"carousel",
+    storyline:"一個平凡週二的碎片集，沒有劇情，只有同色系的美感。傳遞「沒有大事發生的一天也值得記錄」。觀眾看完覺得「原來這樣也能發」，獲得安心感而收藏。",
+    shots:[["圖1","封面：一張最強的靜圖 + 小字「a tuesday」"],["圖2","俯拍早餐"],["圖3","窗外光/樹影"],["圖4","路上走的腳"],["圖5","咖啡杯特寫"],["圖6","你側臉/背影"],["圖7","傍晚天空"],["圖末","一句話「nothing happened, and it was enough」"]],
+    onscreen:[
+      {t:"a tuesday",pos:"圖1左下小字",font:"手寫體/衬線小字",anim:"靜態",time:"封面"},
+      {t:"nothing happened,\nand it was enough.",pos:"圖末置中",font:"衬線字",anim:"靜態",time:"圖末"}
+    ],
+    express:"語氣：隨性、不刻意、像翻相機膠卷。字極少——只有封面+結尾兩處字。色調全卷統一（同 preset）是美感關鍵。圖片順序：強→柔→強→柔交替。不加文字濾鏡，讓圖自己說話。",
+    caption:"a tuesday. ☕\nnothing happened, and it was enough.\n\n— EN —\na tuesday.\nnothing happened, and it was enough.",
+    hash:"#photodump #aesthetic #lifestyle #日常 #tuesday",
+    ex:"https://www.lemon8-app.com/discover/aesthetic%20instagram%20photo%20dump%20ideas?region=us",
+    notes:"save-bait。關鍵=同色系+少字+強弱交替。從相機膠卷挑 6–10 張同色系即可，不用新拍。用 Panoslice 的 scrapbook 模板加分。"
+  },
+  {
+    title:"腳本 H ·「Things nobody tells you about your 20s」文字卡 Carousel",
+    src:"What nobody tells you trend",fmt:"Carousel · 6圖文字卡",rhythm:"配方D·一圖一意+save prompt",typ:"carousel",
+    storyline:"5–6 條真誠的、非老生常談的建議，每圖一條。封面承諾「nobody tells you」，每條都讓人覺得「原來不是只有我這樣想」而釋然。結尾 save prompt。觀眾收藏反覆看。",
+    shots:[["圖1","封面：大字「things nobody tells you about your 20s」"],["圖2","建議1：迷路是正常的"],["圖3","建議2：朋友的質比量重要"],["圖4","建議3：存錢不如存經歷"],["圖5","建議4：身體開始不扛造了"],["圖6","建議5：不必討好所有人 + save prompt"]],
+    onscreen:[
+      {t:"things nobody tells you\nabout your 20s",pos:"圖1全屏置中",font:"衬線大字",anim:"靜態",time:"封面"},
+      {t:"1. being lost is part of the route,\nnot a sign you're failing.",pos:"圖置中",font:"衬線中字",anim:"靜態",time:"圖2"},
+      {t:"2. you'll need 3 real friends,\nnot 30 acquaintances.",pos:"圖置中",font:"衬線中字",anim:"靜態",time:"圖3"},
+      {t:"save this for your 20s 🤎",pos:"圖末置中",font:"衬線字",anim:"靜態",time:"圖6"}
+    ],
+    express:"語氣：真誠、像跟妹妹說話、不說教。每條一句話，不超過 20 字。背景用 aesthetic 純色或淡紋理（米/霧綠/灰粉），字體全卷一致衬線。封面承諾要具體（「nobody tells you」比「20s tips」強10倍）。",
+    caption:"things nobody tells you about your 20s 🤎\n\n1. being lost is part of the route, not a sign you're failing.\n2. you'll need 3 real friends, not 30 acquaintances.\n3. collect experiences over paychecks — for now.\n4. your body stops bouncing back. sleep matters.\n5. you don't have to be liked by everyone.\n\nsave this for your 20s.\n\n哪一條最戳你？留言告訴我。\n\n（中文版見精選留言）",
+    hash:"#20幾歲 #成長 #共鳴 #nobodytellsyou #金句",
+    ex:"https://postunreel.com/blog/instagram-carousel-ideas",
+    notes:"save-bait + comment-bait。純文字卡也能爆——關鍵是「非老生常談的真誠」。每條要來自你真實經歷，不是 google 來的。用 Canva 文字卡模板，純色背景+衬線字。"
+  }
+];
+
+function renderScripts(){
+  const s=document.getElementById('slist');s.innerHTML='';
+  SCRIPTS.forEach(function(sc){
+    var rows=sc.shots.map(function(x){return '<tr><td>'+x[0]+'</td><td>'+x[1]+'</td></tr>'}).join('');
+    var ot=sc.onscreen.map(function(o){return '<div class="ot"><span class="t">「'+o.t+'」</span><span class="pos">'+o.pos+'</span><span class="pos">'+o.font+'</span><span class="pos">'+o.anim+'</span><span class="pos">'+o.time+'</span></div>'}).join('');
+    var typb = sc.typ;
+    var el=document.createElement('div');el.className='script';
+    el.innerHTML='<header><div><h3>'+sc.title+'</h3><small><span class="typb '+typb+'" style="margin-right:6px">'+sc.fmt.split(' · ')[0].split(' ·')[0]+'</span>來源：'+sc.src+' · '+sc.fmt+' · 節奏：'+sc.rhythm+'</small></div></header><div class="body"><h4><span class="lang-flag">STORY</span>故事線 Storyline</h4><div class="storyline">'+sc.storyline+'</div><h4>分鏡 Shot list</h4><table class="shots"><thead><tr><th>時間/圖</th><th>畫面</th></tr></thead><tbody>'+rows+'</tbody></table><h4><span class="lang-flag">ON-SCREEN</span>螢幕文字（放什麼字·位置·字體·動畫·時間）</h4><div class="onscreen">'+ot+'</div><h4><span class="lang-flag">EXPRESS</span>表達方式</h4><div class="express">'+sc.express+'</div><h4><span class="lang-flag">中/EN</span>Caption</h4><div class="caption">'+sc.caption+'</div><div class="hashtags">'+sc.hash+'</div><h4>製作筆記</h4><small>'+sc.notes+'</small>'+(sc.ex?'<div style="margin-top:10px"><a class="ex-link" href="'+sc.ex+'" target="_blank" rel="noopener" onclick="openEx(this.href,event)">🔗 看參考爆款</a></div>':'')+'</div>';
+    var btn=document.createElement('button');btn.className='copy';btn.textContent='複製完整腳本';
+    btn.onclick=function(e){e.stopPropagation();var txt=sc.title+'\n來源:'+sc.src+' | '+sc.fmt+' | 節奏:'+sc.rhythm+'\n\n[故事線 Storyline]\n'+sc.storyline+'\n\n[分鏡 Shot list]\n'+sc.shots.map(function(x){return '· '+x[0]+' '+x[1]}).join('\n')+'\n\n[螢幕文字 On-screen]\n'+sc.onscreen.map(function(o){return '· 「'+o.t+'」 ['+o.pos+'|'+o.font+'|'+o.anim+'|'+o.time+']'}).join('\n')+'\n\n[表達方式]\n'+sc.express+'\n\n[Caption 中/EN]\n'+sc.caption+'\n\n'+sc.hash+'\n\n[筆記] '+sc.notes+'\n[參考] '+(sc.ex||'');navigator.clipboard&&navigator.clipboard.writeText(txt);btn.textContent='已複製 ✓';setTimeout(function(){btn.textContent='複製完整腳本'},1400)};
+    el.querySelector('header').appendChild(btn);
+    s.appendChild(el);
+  });
+}
+renderScripts();
+
+/* ---------- 歷史選題 ---------- */
+var HISTORY=[
+  {d:"2026-09-14", items:[{cur:false,t:"Blame it on the Phone",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"日常共鳴情緒——讓人覺得「這在說我」",alt:"可收藏/轉發的價值點",hook:"Blame it on the Phone",why:"trending now",ex:"https://www.instagram.com/reel/ClaN2vPO6kw/"}, {cur:false,t:"When You Finally Realize",f:"rise",p:"thoughts",typ:"reel",fmt:"Reel (新發現)",emp:"成長期的迷茫與自我和解——人人都在經歷",alt:"給同齡人一句「你會沒事的」的安慰",hook:"When You Finally Realize",why:"trending now",ex:"https://www.instagram.com/reel/ChDRdWFjijc/"}, {cur:false,t:"I Miss the Girl You Were",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"對過去自己的溫柔告別",alt:"邀請觀眾接納每個階段的自己",hook:"I Miss the Girl You Were",why:"trending now",ex:"https://www.instagram.com/reel/Cew2gdpp-Q6/"}, {cur:false,t:"Put This Sound Over a Memory You Can't Stop Thinking About",f:"rise",p:"thoughts",typ:"reel",fmt:"Reel (新發現)",emp:"對日常與回憶的感恩，療癒感",alt:"提醒觀眾什麼才是真正重要的",hook:"Put This Sound Over a Memory You Can't Stop Thinking About",why:"trending now",ex:"https://www.instagram.com/reel/CaxVtphg5kv/"}, {cur:false,t:"Ima Need Another Minute",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"日常共鳴情緒——讓人覺得「這在說我」",alt:"可收藏/轉發的價值點",hook:"Ima Need Another Minute",why:"trending now",ex:"https://www.instagram.com/reel/Cd1RnmfDDFU/"}, {cur:false,t:"Beyond Brilliant Idea",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"日常共鳴情緒——讓人覺得「這在說我」",alt:"可收藏/轉發的價值點",hook:"Beyond Brilliant Idea",why:"trending now",ex:"https://www.instagram.com/reel/CZf0Ci5pIXm/"}, {cur:false,t:"Everyday",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"「天天都做但甘願」的踏實感",alt:"讓觀眾也被問到自己天天做的事",hook:"Everyday",why:"trending now",ex:"https://www.instagram.com/reel/CdWMrOjpUTH/"}, {cur:false,t:"Do It With Pizzazz",f:"rise",p:"all",typ:"reel",fmt:"Reel (新發現)",emp:"低谷時自我打氣的共鳴",alt:"分享你的提振方法（利他清單）",hook:"Do It With Pizzazz",why:"trending now",ex:"https://www.instagram.com/reel/Cdgu6UBA0fh/"}, {cur:false,t:"Maturing is realizing…",f:"rise",p:"thoughts",typ:"reel",fmt:"Reel (新發現)",emp:"成長後的反差幽默共鳴",alt:"給觀眾一個會心一笑的認同",hook:"Maturing is realizing [__]",why:"trending now",ex:"https://www.instagram.com/reel/CvzrJs2MdOG/"}, {cur:false,t:"No One Cares",f:"rise",p:"thoughts",typ:"reel",fmt:"Reel (新發現)",emp:"「沒人在看你」的解脫共鳴",alt:"釋放觀眾的社交焦慮",hook:"No One Cares",why:"trending now",ex:"https://www.instagram.com/reel/CvFb8TIAiIZ/"}]}
+];
+function renderHistory(){
+  var c=document.getElementById('histList');
+  var total=HISTORY.reduce(function(a,g){return a+g.items.length},0);
+  document.getElementById('stHist').textContent=total;
+  if(!HISTORY.length){c.innerHTML='<div class="h-empty">尚無歷史選題。每日 09:00 刷新後，舊的自動發現選題會存檔到這裡。</div>';return;}
+  c.innerHTML='';
+  HISTORY.slice().reverse().forEach(function(g){
+    var grp=document.createElement('div');grp.className='hgrp';
+    var head=document.createElement('div');head.className='hgrp-head';
+    head.innerHTML='<h4>📅 '+g.d+'</h4><span class="cnt">'+g.items.length+' 條</span>';
+    head.onclick=function(){grp.classList.toggle('open')};
+    var body=document.createElement('div');body.className='hgrp-body';
+    g.items.forEach(function(t){
+      var fm=FMAP[t.f]||['',''];var tm=TMAP[t.typ]||['',''];
+      var exBtn=t.ex?'<a class="ex-link" href="'+t.ex+'" target="_blank" rel="noopener" onclick="openEx(this.href,event)">🔗 參考</a>':'';
+      var d=document.createElement('div');d.className='trend';
+      d.innerHTML='<div class="trend-top"><div><h3>'+t.t+'</h3><div class="meta"><span class="typb '+tm[1]+'">'+tm[0]+'</span> '+(t.fmt||'')+' · '+(PMAP[t.p]||'')+'</div></div><span class="fresh '+fm[1]+'">'+fm[0]+'</span></div><div class="row"><div><b>共情</b>'+(t.emp||'')+'</div><div><b>利他</b>'+(t.alt||'')+'</div></div><div class="why">'+exBtn+'</div>';
+      body.appendChild(d);
+    });
+    grp.appendChild(head);grp.appendChild(body);
+    c.appendChild(grp);
+  });
+}
+renderHistory();
+
+/* ---------- 導航 ---------- */
+document.getElementById('nav').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#nav button').forEach(function(x){x.classList.remove('on')});b.classList.add('on');
+  document.querySelectorAll('.zone').forEach(function(z){z.classList.remove('on')});
+  document.getElementById('z-'+b.dataset.z).classList.add('on');window.scrollTo(0,0);
+});
+
+/* ---------- 選題過濾（支柱 + 格式 + 熱門）---------- */
+var curF='all',onlyHot=false,curT='all';
+document.getElementById('topicFilters').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  if(b.id==='onlyHot'){onlyHot=!onlyHot;b.classList.toggle('on',onlyHot);}
+  else if(b.dataset.t){document.querySelectorAll('#topicFilters button[data-t]').forEach(function(x){x.classList.remove('on')});b.classList.add('on');curT=b.dataset.t;}
+  else{document.querySelectorAll('#topicFilters button[data-f]').forEach(function(x){if(x.id!=='onlyHot')x.classList.remove('on')});b.classList.add('on');curF=b.dataset.f;}
+  renderTrends(curF,onlyHot,curT);
+});
+
+/* ---------- 拍攝清單持久化 ---------- */
+function persistCheck(id,key){
+  var el=document.getElementById(id);if(!el)return;
+  var saved=JSON.parse(localStorage.getItem(key)||'[]');
+  el.querySelectorAll('input').forEach(function(c,i){c.checked=!!saved[i];c.onchange=function(){var a=[].slice.call(el.querySelectorAll('input')).map(function(x){return x.checked});localStorage.setItem(key,JSON.stringify(a))}});
+  el.querySelectorAll('li').forEach(function(li,i){if(saved[i])li.classList.add('done');li.querySelector('input').onchange=function(){li.classList.toggle('done')}});
+}
+persistCheck('shootCheck','x_shoot_check');
+
+document.querySelectorAll('#z-dash .checklist li input').forEach(function(c,i){
+  c.checked=!!(JSON.parse(localStorage.getItem('x_dash_check')||'[]')[i]);
+  if(c.checked)c.parentElement.classList.add('done');
+  c.onchange=function(){var a=[].slice.call(document.querySelectorAll('#z-dash .checklist li input')).map(function(x){return x.checked});localStorage.setItem('x_dash_check',JSON.stringify(a));c.parentElement.classList.toggle('done')};
+});
+
+/* ---------- 數據復盤表 ---------- */
+var DCOLS=['date','title','fmt','plays','saves','shares','comments','completion','note'];
+function loadTable(tbodyId,key,cols){
+  var tb=document.getElementById(tbodyId);var rows=JSON.parse(localStorage.getItem(key)||'[]');
+  if(!rows.length){rows.push(['','','','','','','','','']);}
+  tb.innerHTML='';
+  rows.forEach(function(r,ri){
+    var tr=document.createElement('tr');
+    cols.forEach(function(c,ci){
+      var td=document.createElement('td');if(c==='title')td.className='title';
+      var inp=document.createElement('input');inp.value=r[ci]||'';inp.placeholder=c==='title'?'主題':c==='note'?'一句話復盤...':'';
+      inp.oninput=function(){rows[ri][ci]=inp.value;localStorage.setItem(key,JSON.stringify(rows))};
+      td.appendChild(inp);tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+  return rows;
+}
+var dataRows=loadTable('dataBody','x_data_log',DCOLS);
+document.getElementById('addRow').onclick=function(){dataRows.push(['','','','','','','','','']);localStorage.setItem('x_data_log',JSON.stringify(dataRows));loadTable('dataBody','x_data_log',DCOLS)};
+
+var RCOLS=['link','emp','alt','borrow'];
+var refRows=loadTable('refBody','x_ref_log',RCOLS);
+document.getElementById('addRef').onclick=function(){refRows.push(['','','','']);localStorage.setItem('x_ref_log',JSON.stringify(refRows));loadTable('refBody','x_ref_log',RCOLS)};
+
+/* ---------- 資料匯出 / 匯入 / 清除（跨設備搬移）---------- */
+var X_KEYS=['x_dash_check','x_cal','x_data_log','x_ref_log'];
+document.getElementById('exportData').onclick=function(){
+  var obj={v:1,exported:new Date().toISOString(),data:{}};
+  X_KEYS.forEach(function(k){obj.data[k]=localStorage.getItem(k)});
+  var blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='xinru_workbench_'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);
+};
+document.getElementById('importData').onchange=function(e){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(){
+    try{var obj=JSON.parse(r.result);var d=obj.data||obj;var n=0;
+      X_KEYS.forEach(function(k){if(d[k]!==undefined&&d[k]!==null){localStorage.setItem(k,d[k]);n++}});
+      alert('✓ 匯入成功（'+n+' 項），即將重新整理頁面。');location.reload();
+    }catch(err){alert('匯入失敗：檔案格式不正確 ('+err.message+')');}
+  };
+  r.readAsText(f);
+  e.target.value='';
+};
+document.getElementById('clearData').onclick=function(){
+  if(confirm('確定清除本機所有計劃資料？此操作無法復原（建議先按「匯出」備份）')){
+    X_KEYS.forEach(function(k){localStorage.removeItem(k)});location.reload();
+  }
+};
+
+/* ---------- 日曆 ---------- */
+var DAYS=['一','二','三','四','五','六','日'];
+var PLAN=JSON.parse(localStorage.getItem('x_cal')||'{}');
+function buildCal(){
+  var cal=document.getElementById('cal');cal.innerHTML='';
+  for(var w=1;w<=4;w++){
+    var lab=document.createElement('div');lab.className='weeklabel';lab.textContent='第 '+w+' 週';cal.appendChild(lab);
+    DAYS.forEach(function(dn,di){
+      var k='w'+w+'d'+di;var d=document.createElement('div');d.className='day'+(di>=5?' weekend':'');
+      d.innerHTML='<div class="dn">週'+dn+'</div>';
+      var ta=document.createElement('textarea');ta.value=PLAN[k]||'';ta.placeholder='計畫...';
+      ta.oninput=function(){PLAN[k]=ta.value;localStorage.setItem('x_cal',JSON.stringify(PLAN))};
+      d.appendChild(ta);cal.appendChild(d);
+    });
+  }
+}
+buildCal();
+</script>
+</body>
+</html>
