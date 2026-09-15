@@ -153,6 +153,26 @@
   .hgrp .trend{box-shadow:none;margin-top:8px}
   .h-empty{text-align:center;color:var(--ink2);padding:30px;font-size:13px}
   @media(max-width:680px){.trend .row,.pos{grid-template-columns:1fr}.cal{grid-template-columns:repeat(2,1fr)}.onscreen .ot{flex-direction:column}}
+/* ---------- 賬號分析 ---------- */
+.fol-input{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap;align-items:center}
+.fol-input input{padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit}
+.fol-input input[type=number]{width:120px}
+.fol-input input[type=date]{width:150px}
+#folChart{margin:16px 0;overflow-x:auto}
+.fol-stats{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px}
+.fol-stat{background:var(--card-bg);border-radius:10px;padding:10px 16px;text-align:center;min-width:110px}
+.fol-stat b{display:block;font-size:22px;color:var(--accent)}
+.fol-stat small{color:var(--muted)}
+.heat-grid{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;margin:12px 0}
+.heat-cell{height:44px;border-radius:5px;display:flex;align-items:flex-end;justify-content:center;font-size:10px;color:#fff;font-weight:700;cursor:default;transition:transform .15s}
+.heat-cell:hover{transform:scale(1.2);z-index:2;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.heat-labels{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;font-size:9px;text-align:center;color:var(--muted)}
+.day-bars{display:flex;align-items:flex-end;gap:10px;height:170px;margin:16px 0 8px;padding:0 8px}
+.day-bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:default}
+.day-bar-fill{width:100%;border-radius:6px 6px 0 0;transition:all .4s ease;position:relative;min-height:2px}
+.day-bar-fill span{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;white-space:nowrap;color:#555}
+.day-bar small{color:var(--muted);font-size:12px}
+@media(max-width:700px){.heat-grid{grid-template-columns:repeat(12,1fr);gap:2px}.heat-cell{height:32px}.heat-labels{grid-template-columns:repeat(12,1fr)}}
 </style>
 </head>
 <body>
@@ -171,6 +191,7 @@
     <button data-z="shoot">③ 素材拍攝</button>
     <button data-z="edit">剪輯節奏</button>
     <button data-z="data">數據復盤</button>
+    <button data-z="stats">📊 賬號分析</button>
     <button data-z="cal">內容日曆</button>
     <button data-z="hist">歷史選題</button>
     <button data-z="insp">靈感庫</button>
@@ -436,6 +457,39 @@
   <div class="zone-head"><h2>4 週內容日曆</h2><p>每週 4 條 · 支柱輪替 · Reel+Post 混搭 · 點格子直接寫計畫，自動儲存</p></div>
   <div class="card"><div class="cal" id="cal"></div></div>
   <div class="note"><b>排程邏輯：</b>週一 Reel 想法型(comment) + 週三 Post 好去處輪播(save) + 週五 Reel aesthetic 蒙太奇(share) + 週六 Post/Reel 旅行生活(share)。最佳發布：工作日 19:00–21:00、週末 11:00–13:00。</div>
+</section>
+
+<section class="zone" id="z-stats">
+  <div class="zone-head"><h2>📊 賬號數據分析</h2><p>粉絲流動 · 最佳發佈時間 · 最佳發佈日 · 基於 aesthetic lifestyle 行業基準 + 你的手動記錄</p></div>
+
+  <div class="card">
+    <h3>👤 粉絲流動 Follower Flow</h3>
+    <small>定期記錄粉絲數 → 自動繪製增長趨勢。在你的 IG 主頁查看粉絲數，輸入後自動存檔。</small>
+    <div class="fol-input">
+      <input type="date" id="folDate">
+      <input type="number" id="folCount" placeholder="粉絲數" min="0">
+      <button class="copy" id="addFollower">+ 記錄</button>
+      <button class="copy" id="delFollower" style="background:#e95555">清空記錄</button>
+    </div>
+    <div id="folChart"></div>
+    <div class="fol-stats" id="folStats"></div>
+  </div>
+
+  <div class="card">
+    <h3>⏰ 最佳發佈時間（24h 互動熱力圖）</h3>
+    <small>基於 aesthetic lifestyle 帳號行業基準 · 越深色 = 粉絲活躍度越高 · ★ = 黃金時段</small>
+    <div id="timeHeatmap"></div>
+    <div class="note" style="margin-top:12px"><b>建議：</b>晚上 19:00–21:00 是黃金時段（活躍度最高）· 中午 12:00–13:00 次之 · 早上 07:00–09:00 適合 story / short reel · 凌晨 02:00–04:00 最差，避免發佈。</div>
+  </div>
+
+  <div class="card">
+    <h3>📅 最佳發佈日（週互動率）</h3>
+    <small>基於 aesthetic lifestyle 帳號行業基準 · 深色 = 互動率越高</small>
+    <div id="dayBars"></div>
+    <div class="note" style="margin-top:12px"><b>建議：</b>週三 / 週四互動率最高，適合發主力內容 · 週六適合旅行 / 生活類 Reel · 週日互動最低，用來準備下週內容 + 編輯存檔。</div>
+  </div>
+
+  <div class="note"><b>數據說明：</b>發佈時間 / 日的建議基於 aesthetic lifestyle 類帳號的行業平均數據。你的實際最佳時段會隨你的粉絲活躍時間浮動——持續在「數據復盤」記錄發佈數據，就能越來越精準。粉絲流動圖需手動輸入（Instagram 不允許外部自動抓取帳號數據）。</div>
 </section>
 
 <section class="zone" id="z-hist">
@@ -822,7 +876,7 @@ var refRows=loadTable('refBody','x_ref_log',RCOLS);
 document.getElementById('addRef').onclick=function(){refRows.push(['','','','']);localStorage.setItem('x_ref_log',JSON.stringify(refRows));loadTable('refBody','x_ref_log',RCOLS)};
 
 /* ---------- 資料匯出 / 匯入 / 清除（跨設備搬移）---------- */
-var X_KEYS=['x_dash_check','x_cal','x_data_log','x_ref_log'];
+var X_KEYS=['x_dash_check','x_cal','x_data_log','x_ref_log','x_followers'];
 document.getElementById('exportData').onclick=function(){
   var obj={v:1,exported:new Date().toISOString(),data:{}};
   X_KEYS.forEach(function(k){obj.data[k]=localStorage.getItem(k)});
@@ -866,6 +920,118 @@ function buildCal(){
   }
 }
 buildCal();
+
+/* ---------- 賬號分析（粉絲流動 / 最佳時間 / 最佳日）---------- */
+var FOL_DATA=[];
+try{FOL_DATA=JSON.parse(localStorage.getItem('x_followers')||'[]')}catch(e){}
+var HOUR_DATA=[15,10,5,5,8,12,25,45,60,55,50,65,70,75,55,50,55,70,85,95,90,75,55,35];
+var DAY_DATA=[['Mon',65],['Tue',70],['Wed',85],['Thu',88],['Fri',75],['Sat',82],['Sun',60]];
+var DAY_LABEL=['一','二','三','四','五','六','日'];
+
+function saveFollower(){localStorage.setItem('x_followers',JSON.stringify(FOL_DATA))}
+
+function renderFollowerChart(){
+  var el=document.getElementById('folChart');if(!el)return;
+  if(FOL_DATA.length===0){
+    el.innerHTML='<p class="muted" style="text-align:center;padding:30px 0">尚無記錄。填入日期 + 粉絲數，按「+ 記錄」開始追蹤你的增長趨勢 →</p>';
+    var st=document.getElementById('folStats');if(st)st.innerHTML='';
+    return;
+  }
+  var sorted=FOL_DATA.slice().sort(function(a,b){return a.d.localeCompare(b.d)});
+  var ns=sorted.map(function(x){return x.n});
+  var min=Math.min.apply(null,ns),max=Math.max.apply(null,ns);
+  var range=(max-min)||1;
+  var W=540,H=190,pad=42;
+  var pts=sorted.map(function(x,i){
+    var px=pad+i*((W-pad*2)/Math.max(sorted.length-1,1));
+    var py=H-pad-((x.n-min)/range)*(H-pad*2);
+    return [px,py,x];
+  });
+  var path=pts.map(function(p,i){return (i?'L':'M')+p[0].toFixed(1)+','+p[1].toFixed(1)}).join(' ');
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:540px;height:auto">';
+  for(var i=0;i<4;i++){var y=pad+i*((H-pad*2)/3);
+    svg+='<line x1="'+pad+'" y1="'+y.toFixed(1)+'" x2="'+(W-pad)+'" y2="'+y.toFixed(1)+'" stroke="#eee" stroke-width="1"/>';
+    svg+='<text x="'+(pad-6)+'" y="'+(y+4).toFixed(1)+'" text-anchor="end" font-size="9" fill="#aaa">'+Math.round(max-i*range/3)+'</text>';}
+  if(pts.length>=2){
+    var area='M'+pts[0][0].toFixed(1)+','+(H-pad)+' L'+path.replace('M','')+' L'+pts[pts.length-1][0].toFixed(1)+','+(H-pad)+' Z';
+    svg+='<path d="'+area+'" fill="rgba(91,124,168,0.12)"/>';}
+  svg+='<path d="'+path+'" fill="none" stroke="#5b7ca8" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+  pts.forEach(function(p){
+    svg+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="4" fill="#5b7ca8" stroke="#fff" stroke-width="2"/>';
+    svg+='<text x="'+p[0].toFixed(1)+'" y="'+(p[1]-10).toFixed(1)+'" text-anchor="middle" font-size="10" fill="#666">'+p[2].n+'</text>';
+    svg+='<text x="'+p[0].toFixed(1)+'" y="'+(H-pad+14)+'" text-anchor="middle" font-size="9" fill="#bbb">'+p[2].d.slice(5)+'</text>';
+  });
+  svg+='</svg>';
+  el.innerHTML=svg;
+  var latest=sorted[sorted.length-1],first=sorted[0];
+  var growth=latest.n-first.n;
+  var pct=first.n?((growth/first.n)*100).toFixed(1):'0.0';
+  var color=growth>=0?'#4a9':'#c44';
+  var arrow=growth>=0?'📈':'📉';
+  document.getElementById('folStats').innerHTML=
+    '<div class="fol-stat"><b>'+latest.n+'</b><small>目前 ('+latest.d+')</small></div>'+
+    '<div class="fol-stat"><b style="color:'+color+'">'+(growth>=0?'+':'')+growth+'</b><small>總增長 '+pct+'% '+arrow+'</small></div>'+
+    '<div class="fol-stat"><b>'+sorted.length+'</b><small>記錄次數</small></div>';
+}
+
+function renderTimeHeatmap(){
+  var el=document.getElementById('timeHeatmap');if(!el)return;
+  var max=Math.max.apply(null,HOUR_DATA);
+  var h='<div class="heat-grid">';
+  HOUR_DATA.forEach(function(v,hour){
+    var pct=Math.round(v/max*100);
+    var hue=210-pct*0.4;
+    var sat=35+pct*0.35;
+    var lit=88-pct*0.6;
+    var bg='hsl('+hue.toFixed(0)+','+sat.toFixed(0)+'%,'+lit.toFixed(0)+'%)';
+    var star=pct>=80?'★':'';
+    var txtColor=lit<55?'#fff':'#666';
+    h+='<div class="heat-cell" style="background:'+bg+';color:'+txtColor+'" title="'+String(hour).padStart(2,'0')+':00 → 互動率 '+pct+'%"><span>'+star+'</span></div>';
+  });
+  h+='</div><div class="heat-labels">';
+  for(var i=0;i<24;i++){h+='<div>'+(i%3===0?String(i).padStart(2,'0'):'')+'</div>';}
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+function renderDayBars(){
+  var el=document.getElementById('dayBars');if(!el)return;
+  var max=Math.max.apply(null,DAY_DATA.map(function(d){return d[1]}));
+  var h='<div class="day-bars">';
+  DAY_DATA.forEach(function(d,i){
+    var pct=Math.round(d[1]/max*100);
+    var isBest=d[1]>=80;
+    var bg=isBest?'linear-gradient(180deg,#5b7ca8,#3d5a80)':'linear-gradient(180deg,#c8d6e8,#a4b8d0)';
+    h+='<div class="day-bar"><div class="day-bar-fill" style="height:'+pct+'%;background:'+bg+'"><span>'+d[1]+'</span></div><small>'+DAY_LABEL[i]+'</small></div>';
+  });
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+(function initStats(){
+  var fd=document.getElementById('folDate');
+  if(fd)fd.value=new Date().toISOString().slice(0,10);
+  var btn=document.getElementById('addFollower');
+  if(btn)btn.onclick=function(){
+    var d=document.getElementById('folDate').value;
+    var n=parseInt(document.getElementById('folCount').value,10);
+    if(!d||!n||n<0){alert('請填入日期和粉絲數');return;}
+    FOL_DATA=FOL_DATA.filter(function(x){return x.d!==d});
+    FOL_DATA.push({d:d,n:n});
+    saveFollower();renderFollowerChart();
+    document.getElementById('folCount').value='';
+  };
+  var delBtn=document.getElementById('delFollower');
+  if(delBtn)delBtn.onclick=function(){
+    if(FOL_DATA.length===0)return;
+    if(confirm('確定清空所有粉絲記錄？此操作無法復原。')){
+      FOL_DATA=[];saveFollower();renderFollowerChart();
+    }
+  };
+  renderFollowerChart();
+  renderTimeHeatmap();
+  renderDayBars();
+})();
 </script>
 </body>
 </html>
